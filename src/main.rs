@@ -18,6 +18,7 @@ mod nav_bandeau;
 mod page2;
 mod utils;
 
+
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 
 /*thread_local! {
@@ -32,6 +33,7 @@ enum CurrentView {
 }
 
 fn main() {
+    // on détermine un config minimale pour l'app.
     let conf = Config::new()
         .with_disable_context_menu(false)
         .with_window(
