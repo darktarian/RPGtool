@@ -1,0 +1,12 @@
+[
+  {
+    "index": 0,
+    "name": "Aventurier",
+    "capa_spe_base": "Agile: avantage sur les sauvegarde nécessitant les capacités athlétiques"
+  },
+  {
+    "index":1,
+    "name": "Philanthrope",
+    "capa_spe_base": "indomptable : avantage sur les sauvegardes contre la tromperie"
+  }
+]

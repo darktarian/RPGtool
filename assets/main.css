@@ -1,0 +1,106 @@
+/* App-wide styling */
+:root {
+  --bs-primary: #bfa36f;
+  --bs-secondary: #3b5b5b;
+  --bs-success: #2c6b4f;
+  --bs-light: #f5f5dc;
+  --bs-dark: #0b0f0f;
+}
+
+body {
+  padding: 15px;
+  background-color: #0b0f0f;
+  background: radial-gradient(circle at center, #0b0f0f, #000000);
+  /*background-image: url("https://www.transparenttextures.com/patterns/3px-tile.png");*/
+  font-family: "Cinzel', serif"; /*"UnifrakturCook", cursive;*/
+  background-size: fill;
+  color: #f5f5dc; /*#ddd;*/
+}
+
+.sidebar {
+  background-color: #1a1a1a;
+}
+
+.btn-warning {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+  color: #0b0f0f;
+}
+
+.btn-primary:hover {
+  background-color: #d4b16a;
+}
+
+.square-btn {
+  width: 70px;
+  aspect-ratio: 1 / 1;
+  background-color: #34495e;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-carac {
+  padding-left: 1px;
+  padding-right: 1px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: burlywood;
+  color: black;
+  border-color: black;
+}
+
+.btn-cth-dark {
+  background-color: #0b1f1a;
+  color: #90c99c;
+  border: 1px solid #264c3f;
+  font-family: "Georgia", serif;
+}
+
+.btn-cth-dark:hover {
+  background-color: #132d26;
+  border-color: #2e5a49;
+  color: #aee1b5;
+}
+
+.btn-cth-eldritch {
+  background: linear-gradient(135deg, #0b1f1a, #304e43);
+  color: #d7fce1;
+  border: 1px solid #1f3a30;
+  font-style: italic;
+  text-shadow: 1px 1px 3px #000;
+}
+
+.btn-cth-eldritch:hover {
+  background: linear-gradient(135deg, #1f3a30, #406a5b);
+  color: #ffffff;
+}
+
+.btn-cth-danger {
+  background-color: #3a0f0f;
+  color: #f2baba;
+  border: 1px solid #601818;
+  font-weight: bold;
+}
+
+.btn-cth-danger:hover {
+  background-color: #6a1b1b;
+  border-color: #7c2323;
+  color: #fff0f0;
+}
+
+.btn-cth-arcane {
+  background-color: #403930;
+  color: #e0d9c0;
+  border: 1px dashed #b3a26c;
+  font-family: "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.btn-cth-arcane:hover {
+  background-color: #574f43;
+  color: #fffbe8;
+  border-color: #d9c892;
+}

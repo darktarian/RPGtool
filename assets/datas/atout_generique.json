@@ -1,0 +1,14 @@
+[
+  {
+    "atout_name": "Agile",
+    "atout_desc": "Le personnage bébéficie d'un avantage pour les sauvegardes nécéssitant des capacités athlétiques, comme grimper, sauter ou se balancer"
+  },
+  {
+    "atout_name": "Artiste",
+    "atout_desc": "le personnage bénéficie d'un avantage pour les sauvegardes lorsqu'il divertit un auditoire, ou joue un rôle afin d'éviter des dégâts ou des répercussions de ses actes."
+  },
+  {
+    "atout_name": "Attaque surprise",
+    "atout_desc": "si votre investigateur est armé lorsqu'un combat commence, il inflige deux fois les dégâts habituels avec l'arme qu'il a en main lors de sa premiere action si elle vise à blesser quelqu'un."
+  }
+]
