@@ -16,6 +16,7 @@ serde_json = "1.0.82"
 serde = { version = "^1.0", features = ["derive"] }
 rusqlite = { version = "0.36.0", features = ["bundled"] }
 dioxus-desktop = "0.6.3"
+dice_forge = "0.3.0"
 #tokio-rusqlite = "0.6.0"
 #tokio={version ="1.45.1", features = ["full"]}
 

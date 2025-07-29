@@ -10,10 +10,10 @@ use dioxus_desktop::muda::Submenu;
 use std::rc::Rc;
 
 use crate::chthulhu_gen::ChackGenerate;
-use crate::dashboard::Dashboard;
+use crate::diceboard::DiceBoard;
 use crate::page2::Page2;
 mod chthulhu_gen;
-mod dashboard;
+mod diceboard;
 mod nav_bandeau;
 mod page2;
 mod utils;
@@ -121,7 +121,7 @@ fn App() -> Element {
 
 fn render_current_view(view: CurrentView) -> Element {
     match view {
-        CurrentView::Dashboard => rsx! { Dashboard {} },
+        CurrentView::Dashboard => rsx! { DiceBoard {} },
         CurrentView::CthulhuGen => rsx! { ChackGenerate {  } },
         CurrentView::Page2 => rsx! { Page2 {  } },
     }

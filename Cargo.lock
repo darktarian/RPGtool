@@ -769,6 +769,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "dice_forge"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e5db39205341d76fe5823207f9be1d7e48a5b7d2c1c9cc4d205473eb7f3a3b2c"
+dependencies = [
+ "rand 0.8.5",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1181,6 +1190,7 @@ name = "dioxus_desk"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "dice_forge",
  "dioxus",
  "dioxus-desktop",
  "getrandom 0.3.3",
