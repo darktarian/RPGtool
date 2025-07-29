@@ -1195,6 +1195,7 @@ dependencies = [
  "dioxus-desktop",
  "getrandom 0.3.3",
  "js-sys",
+ "ndm",
  "rand 0.9.1",
  "rusqlite",
  "serde",
@@ -2719,6 +2720,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ee6cda3051665f1fb8d9e08fc35c96d5a244fb1be711a03b71118828afc9a873"
 dependencies = [
  "jni-sys",
+]
+
+[[package]]
+name = "ndm"
+version = "0.9.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0bfff268d833fa14c8f871173d75aa146082016c2f4b81a7e2856648daa4f4e9"
+dependencies = [
+ "lazy_static",
+ "rand 0.8.5",
+ "regex",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
