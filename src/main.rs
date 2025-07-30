@@ -13,11 +13,11 @@ use crate::chthulhu_gen::ChackGenerate;
 use crate::diceboard::DiceBoard;
 use crate::page2::Page2;
 mod chthulhu_gen;
+mod chtulhu_data;
 mod diceboard;
 mod nav_bandeau;
 mod page2;
 mod utils;
-
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 

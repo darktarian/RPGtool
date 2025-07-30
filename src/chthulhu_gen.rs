@@ -305,4 +305,3 @@ pub(crate) fn ChackGenerate() -> Element {
          }
     } //end rsx
 }
-
