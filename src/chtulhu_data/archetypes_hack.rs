@@ -89,10 +89,17 @@ pub(crate) struct Archetype {
     torche: String,
     bagou: String,
     de_vie: String,
-    pdv: String,
+    pdv: u8,
     richesse: String,
     de_sm: String,
     degat: (String, String),
+    metiers: Vec<Metier>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Default)]
+pub(crate) struct Metier {
+    desc: String,
+    objets: Vec<String>,
 }
 
 pub(crate) fn get_archetype() -> HashMap<&'static str, Archetype> {
@@ -106,10 +113,31 @@ pub(crate) fn get_archetype() -> HashMap<&'static str, Archetype> {
             torche: "d8".to_string(),
             bagou: "d10".to_string(),
             de_vie: "d6".to_string(),
-            pdv: "12".to_string(),
+            pdv: 12,
             richesse: "d6".to_string(),
             de_sm: "d8".to_string(),
             degat: ("d4".to_string(), "d4".to_string()),
+
+            metiers: vec![
+                Metier {
+                    desc: "Acteur".to_string(),
+                    objets: vec!["porte-bonheur".to_string(), "vêtements chics".to_string()],
+                },
+                Metier {
+                    desc: "Artisan".to_string(),
+                    objets: vec![
+                        "outils de réparation".to_string(),
+                        "tablier en cuir (1PA)".to_string(),
+                    ],
+                },
+                Metier {
+                    desc: "Escroc".to_string(),
+                    objets: vec![
+                        "(papiers officiels (falsifiés)".to_string(),
+                        "vêtements chics".to_string(),
+                    ],
+                },
+            ],
         },
     );
 

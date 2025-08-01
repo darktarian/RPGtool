@@ -20,6 +20,7 @@ mod page2;
 mod utils;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
+const DB: Asset = asset!("/assets/cthulhuhack.db");
 
 /*thread_local! {
    pub static DB: RefCell<Connection> = RefCell::new(rusqlite::Connection::open("cthulhuhack.db").expect("Failed to open database"));
@@ -56,7 +57,9 @@ fn main() {
 fn App() -> Element {
     use_context_provider(|| {
         Rc::new(
-            rusqlite::Connection::open("assets/cthulhuhack.db").expect("Failed to open database"),
+            rusqlite::Connection::open(DB.bundled().absolute_source_path())
+                .expect("Failed to open database"),
+            //rusqlite::Connection::open("assets/cthulhuhack.db").expect("Failed to open database"),
         )
     });
 
