@@ -98,18 +98,17 @@ fn get_archetype() -> Vec<Archetype> {
     .unwrap()
 }
 
+pub(crate) fn CthulhuGenAll() -> Element{
+    rsx!{
+        ChackGenerate {  },
+        Get_atout {  }
+    }
+}
+
 #[component]
 pub(crate) fn ChackGenerate() -> Element {
     let archetypes = get_archetype();
-    let atouts_gen = get_atout_generique();
-    let mut atout_names = Vec::new();
-
-    for atout in atouts_gen {
-        atout_names.push(atout.name);
-    }
-
     let mut name_vec = Vec::new();
-
     for arch in &archetypes {
         name_vec.push(arch.name.clone());
         println!("result base : {arch:?}");
@@ -125,12 +124,10 @@ pub(crate) fn ChackGenerate() -> Element {
     let mut sig_cha = use_signal(|| 0);
 
     let mut sig_name = use_signal(String::new);
-    let mut selected_atout = use_signal(HashSet::<String>::new);
+
 
     let txt_base = get_archetype_base(archetypes, &sig_name.read());
     info!("txt base : {txt_base}");
-
-    info!("{:?}", selected_atout);
 
     rsx! {
         div {  class:"row mb-2",
@@ -254,44 +251,69 @@ pub(crate) fn ChackGenerate() -> Element {
 
             }
         }
-        div { class:"row my-3 border-top", id:"ligne2",
-            div{ class:"col mt-2",
-                        for atout in atout_names{
-                                div {
-                                    input {
-                                        class: "form-check-input",
-                                        r#type: "checkbox",
-                                        id: "{atout}",
-                                        checked: selected_atout().contains(&atout),
-                                        oninput: move |evt| {
-                                            //println!("1 atout : {atout}");
-                                            if evt.checked(){
-                                                //println!("2 checked");
-                                                //println!("4 add");
-                                                let mut sc = selected_atout();
-                                                sc.insert(atout.clone());
-                                                selected_atout.set(sc);
-                                                //println!(" post add {:?}", selected_atout);
-                                            }else {
-                                                //println!("3 remove");
-                                                let mut sc = selected_atout();
-                                                sc.remove(&atout);
-                                                selected_atout.set(sc);
-                                            }
-                                            //println!("---> {selected_atout:?}")
-                                        },
-                                    }
-                                    label {
-                                        class:"form-check-label",
-                                        //r#for: "{atout.clone()}",
-                                        " {atout}"
-                                    }
-                                }
+    }
+}
 
-                        } // end for
-                }
-            div { class:"col mt-2",
+#[component]
+pub(crate) fn Get_atout() -> Element {
+    let atouts_gen = get_atout_generique();
+    let mut atout_names = Vec::new();
+
+    for atout in atouts_gen {
+        atout_names.push(atout.name);
+    }
+
+    let mut selected_atout = use_signal(HashSet::<String>::new);
+    info!("{:?}", selected_atout);
+
+    let mut all_atouts = vec![vec![], vec![], vec![], vec![], vec![], vec![], vec![], vec![]];
+    for (x,atout) in atout_names.iter().enumerate(){
+        let atout_cloned = atout.clone();
+        all_atouts[x%8].push(
+            rsx!{
                 div {
+                    input {
+                        class: "form-check-input",
+                        r#type: "checkbox",
+                        id: "{atout}",
+                        checked: selected_atout().contains(&atout_cloned),
+                        oninput: move |evt| {
+
+                            if evt.checked(){
+                                let mut sc = selected_atout();
+                                sc.insert(atout_cloned.clone());
+                                selected_atout.set(sc);
+                                
+                            }else {
+                                //println!("3 remove");
+                                let mut sc = selected_atout();
+                                sc.remove(&atout_cloned);
+                                selected_atout.set(sc);
+                            }
+                        },
+                    }
+                    label {
+                        class:"form-check-label",
+                        " {atout}"
+                    }
+                }
+            }
+        );
+     }
+
+     rsx!{
+        for elem in all_atouts {
+            div { class: "row",
+                for sub_item in elem{
+                    div{ class:"col-sm",
+                        {sub_item}
+                    }
+                }
+            }
+        }
+        
+        div { class:"row",
+                div { class: "col",
                     label { "les selectionnés:" }
                     div {
                         ul {
@@ -302,6 +324,6 @@ pub(crate) fn ChackGenerate() -> Element {
                      }
                 }//end des atouts selectionnés
              }
-         }
-    } //end rsx
+    }
 }
+

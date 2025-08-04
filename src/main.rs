@@ -9,7 +9,7 @@ use dioxus_desktop::muda::PredefinedMenuItem;
 use dioxus_desktop::muda::Submenu;
 use std::rc::Rc;
 
-use crate::chthulhu_gen::ChackGenerate;
+use crate::chthulhu_gen::CthulhuGenAll;
 use crate::diceboard::DiceBoard;
 use crate::page2::Page2;
 mod chthulhu_gen;
@@ -125,7 +125,7 @@ fn App() -> Element {
 fn render_current_view(view: CurrentView) -> Element {
     match view {
         CurrentView::Dashboard => rsx! { DiceBoard {} },
-        CurrentView::CthulhuGen => rsx! { ChackGenerate {  } },
+        CurrentView::CthulhuGen => rsx! { CthulhuGenAll {  } },
         CurrentView::Page2 => rsx! { Page2 {  } },
     }
 }
@@ -188,77 +188,3 @@ fn create_menu() -> Menu {
     menu
 }
 
-/*
-fn create_menu() -> MenuBar {
-    let mut menu_bar = MenuBar::new();
-
-    // Menu Fichier
-    let mut file_menu = MenuBar::new();
-    file_menu.add_native_item(MenuItem::new(
-        MenuItemAttributes::new("Nouveau").with_accelerators(&[
-            wry::application::accelerator::Accelerator::new(
-                Some(wry::application::keyboard::ModifiersState::CTRL),
-                wry::application::keyboard::KeyCode::KeyN,
-            ),
-        ]),
-    ));
-    file_menu.add_native_item(MenuItem::new(
-        MenuItemAttributes::new("Ouvrir").with_accelerators(&[
-            wry::application::accelerator::Accelerator::new(
-                Some(wry::application::keyboard::ModifiersState::CTRL),
-                wry::application::keyboard::KeyCode::KeyO,
-            ),
-        ]),
-    ));
-    file_menu.add_native_item(MenuItem::Separator);
-    file_menu.add_native_item(MenuItem::new(
-        MenuItemAttributes::new("Quitter").with_accelerators(&[
-            wry::application::accelerator::Accelerator::new(
-                Some(wry::application::keyboard::ModifiersState::CTRL),
-                wry::application::keyboard::KeyCode::KeyQ,
-            ),
-        ]),
-    ));
-
-    // Menu Édition
-    let mut edit_menu = MenuBar::new();
-    edit_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Annuler")));
-    edit_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Rétablir")));
-    edit_menu.add_native_item(MenuItem::Separator);
-    edit_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Utilisateurs")));
-    edit_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Préférences")));
-
-    // Menu Affichage
-    let mut view_menu = MenuBar::new();
-    view_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Actualiser")));
-    view_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Plein écran")));
-    view_menu.add_native_item(MenuItem::Separator);
-    view_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Tableau de bord")));
-    view_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Utilisateurs")));
-    view_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Rapports")));
-
-    // Menu Outils
-    let mut tools_menu = MenuBar::new();
-    tools_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Générer rapport")));
-    tools_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Exporter données")));
-    tools_menu.add_native_item(MenuItem::Separator);
-    tools_menu.add_native_item(MenuItem::new(MenuItemAttributes::new(
-        "Console développeur",
-    )));
-
-    // Menu Aide
-    let mut help_menu = MenuBar::new();
-    help_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Documentation")));
-    help_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("Raccourcis clavier")));
-    help_menu.add_native_item(MenuItem::Separator);
-    help_menu.add_native_item(MenuItem::new(MenuItemAttributes::new("À propos")));
-
-    // Ajouter les menus à la barre de menu
-    menu_bar.add_submenu("Fichier", true, file_menu);
-    menu_bar.add_submenu("Édition", true, edit_menu);
-    menu_bar.add_submenu("Affichage", true, view_menu);
-    menu_bar.add_submenu("Outils", true, tools_menu);
-    menu_bar.add_submenu("Aide", true, help_menu);
-
-    menu_bar
-}*/
