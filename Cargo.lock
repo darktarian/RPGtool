@@ -1195,7 +1195,9 @@ dependencies = [
  "dioxus-desktop",
  "getrandom 0.3.3",
  "js-sys",
+ "ndm",
  "rand 0.9.1",
+ "rpg-dice-roller",
  "rusqlite",
  "serde",
  "serde_json",
@@ -2722,6 +2724,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "ndm"
+version = "0.9.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0bfff268d833fa14c8f871173d75aa146082016c2f4b81a7e2856648daa4f4e9"
+dependencies = [
+ "lazy_static",
+ "rand 0.8.5",
+ "regex",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "new_debug_unreachable"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3594,6 +3609,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "rpg-dice-roller"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eec92693ddbe45f0af0065590ad0fe6268e3c1616bdec524a4bc7b83d09ddbd3"
+dependencies = [
+ "rand 0.8.5",
+ "winnow 0.6.26",
+]
+
+[[package]]
 name = "rusqlite"
 version = "0.36.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4322,7 +4347,7 @@ checksum = "1b5bb770da30e5cbfde35a2d7b9b8a2c4b8ef89548a7a6aeab5c9a576e3e7421"
 dependencies = [
  "indexmap 2.9.0",
  "toml_datetime",
- "winnow",
+ "winnow 0.5.40",
 ]
 
 [[package]]
@@ -4335,7 +4360,7 @@ dependencies = [
  "serde",
  "serde_spanned",
  "toml_datetime",
- "winnow",
+ "winnow 0.5.40",
 ]
 
 [[package]]
@@ -5235,6 +5260,15 @@ name = "winnow"
 version = "0.5.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f593a95398737aeed53e489c785df13f3618e41dbcd6718c6addbf1395aa6876"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
+name = "winnow"
+version = "0.6.26"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e90edd2ac1aa278a5c4599b1d89cf03074b610800f866d4026dc199d7929a28"
 dependencies = [
  "memchr",
 ]
