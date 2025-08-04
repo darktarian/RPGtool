@@ -13,7 +13,6 @@ use crate::chthulhu_gen::CthulhuGenAll;
 use crate::diceboard::DiceBoard;
 use crate::page2::Page2;
 mod chthulhu_gen;
-mod chtulhu_data;
 mod diceboard;
 mod nav_bandeau;
 mod page2;

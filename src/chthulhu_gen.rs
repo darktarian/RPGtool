@@ -263,9 +263,12 @@ pub(crate) fn Get_atout() -> Element {
         atout_names.push(atout.name);
     }
 
+    let mut sig_atout_name= use_signal(String::new);
+
     let mut selected_atout = use_signal(HashSet::<String>::new);
     info!("{:?}", selected_atout);
 
+    /* 
     let mut all_atouts = vec![vec![], vec![], vec![], vec![], vec![], vec![], vec![], vec![]];
     for (x,atout) in atout_names.iter().enumerate(){
         let atout_cloned = atout.clone();
@@ -311,8 +314,33 @@ pub(crate) fn Get_atout() -> Element {
                 }
             }
         }
-        
-        div { class:"row",
+
+        */
+    rsx!{
+        div { class: "row mt-3",
+            div { class:"col",
+                label { "Choisissez votre atout : " }
+                br {  }
+                select {
+                        class: "btn",
+                        value: "{sig_atout_name}",
+                        onchange: move |evt| {
+                            sig_atout_name.set(evt.value());
+                            let mut sc = selected_atout();
+                            info!("{sig_atout_name}");
+                            sc.insert(sig_atout_name());
+                             selected_atout.set(sc);
+                        },
+                        option { value: "...", "..." }
+                        for atout in atout_names  {
+                            option { value: "{atout}", "{atout}" }
+                        }
+                }
+
+            }
+        }
+
+       div { class:"row mt-5",
                 div { class: "col",
                     label { "les selectionnés:" }
                     div {
@@ -323,7 +351,7 @@ pub(crate) fn Get_atout() -> Element {
                         }
                      }
                 }//end des atouts selectionnés
-             }
+        }
     }
 }
 
