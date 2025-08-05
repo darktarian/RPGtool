@@ -3,7 +3,7 @@ use std::{collections::HashSet, rc::Rc};
 use dioxus::{logger::tracing::info, prelude::*};
 use rand::{Rng, SeedableRng};
 
-use rusqlite::Connection;
+use rusqlite::{Connection};
 use serde::{Deserialize, Serialize};
 
 //use crate::DB;
@@ -46,10 +46,11 @@ fn get_archetype_base(arch: Vec<Archetype>, target: &str) -> String {
     result
 }
 
+/*
 #[derive(Debug, Deserialize, Serialize, Default)]
 struct ArchetypeJson {
     datas: Vec<Archetype>,
-}
+}*/
 
 #[derive(Debug, Deserialize, Serialize, Default)]
 struct Archetype {
@@ -265,58 +266,10 @@ pub(crate) fn Get_atout() -> Element {
 
     let mut sig_atout_name= use_signal(String::new);
 
-    let mut selected_atout = use_signal(HashSet::<String>::new);
+    let mut selected_atout = use_signal(HashSet::<Rc<String>>::new);
     info!("{:?}", selected_atout);
 
-    /* 
-    let mut all_atouts = vec![vec![], vec![], vec![], vec![], vec![], vec![], vec![], vec![]];
-    for (x,atout) in atout_names.iter().enumerate(){
-        let atout_cloned = atout.clone();
-        all_atouts[x%8].push(
-            rsx!{
-                div {
-                    input {
-                        class: "form-check-input",
-                        r#type: "checkbox",
-                        id: "{atout}",
-                        checked: selected_atout().contains(&atout_cloned),
-                        oninput: move |evt| {
-
-                            if evt.checked(){
-                                let mut sc = selected_atout();
-                                sc.insert(atout_cloned.clone());
-                                selected_atout.set(sc);
-                                
-                            }else {
-                                //println!("3 remove");
-                                let mut sc = selected_atout();
-                                sc.remove(&atout_cloned);
-                                selected_atout.set(sc);
-                            }
-                        },
-                    }
-                    label {
-                        class:"form-check-label",
-                        " {atout}"
-                    }
-                }
-            }
-        );
-     }
-
      rsx!{
-        for elem in all_atouts {
-            div { class: "row",
-                for sub_item in elem{
-                    div{ class:"col-sm",
-                        {sub_item}
-                    }
-                }
-            }
-        }
-
-        */
-    rsx!{
         div { class: "row mt-3",
             div { class:"col",
                 label { "Choisissez votre atout : " }
@@ -328,8 +281,11 @@ pub(crate) fn Get_atout() -> Element {
                             sig_atout_name.set(evt.value());
                             let mut sc = selected_atout();
                             info!("{sig_atout_name}");
-                            sc.insert(sig_atout_name());
-                             selected_atout.set(sc);
+                            //on limite à 4 le nombre d'atout à choisir
+                            if sc.len()<4{
+                                sc.insert(sig_atout_name().into());
+                                selected_atout.set(sc);
+                            }
                         },
                         option { value: "...", "..." }
                         for atout in atout_names  {
@@ -344,14 +300,22 @@ pub(crate) fn Get_atout() -> Element {
                 div { class: "col",
                     label { "les selectionnés:" }
                     div {
-                        ul {
-                            for select in selected_atout().iter(){
-                                li { "{select:?}" }
+                        for select in selected_atout().iter().cloned(){
+                                "{select} "
+                            button {class: "btn btn-sm btn-outline-danger ml-2",
+                                    onclick: move |_| {
+                                        let mut sc = selected_atout();
+                                        sc.remove(&select);
+                                        selected_atout.set(sc);
+                                    },
+                                "🗑"
                             }
+                            br {  }
                         }
                      }
                 }//end des atouts selectionnés
         }
     }
+
 }
 
