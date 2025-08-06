@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 
 //use crate::DB;
 
+///Genrateur des valeurs de caracteristiques (entre 4 et 18)
 pub(crate) fn get_random_carac() -> i32 {
     let val = getrandom::u64().unwrap();
     let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
@@ -20,6 +21,8 @@ pub(crate) fn get_a_dice(max: u32) -> u32 {
     rng.random_range(1..max)
 }
 
+///
+/// Petite fonction pour attribuer les bonus au caracteristiques.
 pub(crate) fn get_bonus(val: i32) -> String {
     match val {
         4..=5 => "-3".to_string(),
@@ -46,12 +49,8 @@ fn get_archetype_base(arch: Vec<Archetype>, target: &str) -> String {
     result
 }
 
-/*
-#[derive(Debug, Deserialize, Serialize, Default)]
-struct ArchetypeJson {
-    datas: Vec<Archetype>,
-}*/
-
+/// Structure de retour de la requete SQLITE pour les archetype.
+/// 
 #[derive(Debug, Deserialize, Serialize, Default)]
 struct Archetype {
     index: u32,
@@ -59,6 +58,8 @@ struct Archetype {
     capacite_spe_base: String,
 }
 
+/// Structure de retour de la requete SQLITE pour les atouts.
+/// 
 #[derive(Debug, Deserialize, Serialize, Default, Clone)]
 struct AtoutGenerique {
     index: u32,
@@ -66,6 +67,8 @@ struct AtoutGenerique {
     atout_desc: String,
 }
 
+/// Requet vers la base sqlite pour obtenir les atout
+/// TODO : check des atouts avancés ?
 fn get_atout_generique() -> Vec<AtoutGenerique> {
     let conn: Rc<Connection> = use_context();
     let mut rqst_atout = conn.prepare("select * from atout_generique").unwrap();
@@ -83,6 +86,8 @@ fn get_atout_generique() -> Vec<AtoutGenerique> {
         .unwrap()
 }
 
+///Requete vers la base sqlite pour obtenir les données d'archetypes.
+/// 
 fn get_archetype() -> Vec<Archetype> {
     let conn: Rc<Connection> = use_context();
     let mut rqst = conn.prepare("select * from archetype").unwrap();
@@ -99,16 +104,18 @@ fn get_archetype() -> Vec<Archetype> {
     .unwrap()
 }
 
+///On assemble les parties de la vue ici.
 pub(crate) fn CthulhuGenAll() -> Element{
     rsx!{
         ChackGenerate {  },
         Get_atout {  }
     }
 }
-
+///
+/// Ou l'on genere la partie haute de cthulhu genrator avec les caracteristique.
+/// 
 #[component]
 pub(crate) fn ChackGenerate() -> Element {
-
 
     let mut sig_fo = use_signal(|| 0);
     let mut sig_dex = use_signal(|| 0);
@@ -116,9 +123,6 @@ pub(crate) fn ChackGenerate() -> Element {
     let mut sig_int = use_signal(|| 0);
     let mut sig_sag = use_signal(|| 0);
     let mut sig_cha = use_signal(|| 0);
-
-
-    
 
     rsx! {
         div {  class:"row mb-2",
@@ -223,7 +227,6 @@ pub(crate) fn ChackGenerate() -> Element {
 #[component]
 pub(crate) fn Get_atout() -> Element {
 
-
     let archetypes = get_archetype();
     let mut name_vec = Vec::new();
     for arch in &archetypes {
@@ -247,8 +250,8 @@ pub(crate) fn Get_atout() -> Element {
 
     let mut selected_atout = use_signal(HashSet::<Rc<String>>::new);
     
-    info!("{:?}", selected_atout);
-    info!("txt base : {txt_base}");
+    //info!("{:?}", selected_atout);
+    //info!("txt base : {txt_base}");
 
      rsx!{
         div { class: "row mt-3",
