@@ -93,8 +93,8 @@ pub(crate) struct Character {
 impl Display for Character {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         writeln!(f, "Nom : {}", self.name)?;
-        writeln!(f, "Caractéristiques : {}", self.carac)?; // suppose que Caracterisques implémente Display
-        writeln!(f, "Métier : {}", self.metier)?; // idem
+        writeln!(f, "Caractéristiques : {}", self.carac)?;
+        writeln!(f, "Métier : {}", self.metier)?;
         writeln!(f, "Sauvegarde primaire : {}", self.save_primary)?;
         writeln!(f, "Sauvegarde secondaire : {}", self.save_secondary)?;
         writeln!(f, "Torche : {}", self.torche)?;
@@ -106,6 +106,7 @@ impl Display for Character {
         writeln!(f, "Dégâts (non armé) : {}", self.degat_unarmed)?;
         writeln!(f, "Dégâts (armé) : {}", self.degat_armed)?;
 
+        // un peu de mise en forme .... 
         writeln!(f, "Capacités :")?;
         for (key, value) in &self.capacite {
             writeln!(f, "  - {}: {}", key, value)?;
@@ -125,7 +126,6 @@ pub(crate) struct Archetype {
 }
 
 /// Structure de retour de la requete SQLITE pour les atouts.
-///
 #[derive(Debug, Deserialize, Serialize, Default, Clone)]
 pub(crate) struct AtoutGenerique {
     pub(crate) index: u32,
