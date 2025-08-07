@@ -8,15 +8,17 @@ use dioxus_desktop::muda::MenuItem;
 use dioxus_desktop::muda::PredefinedMenuItem;
 use dioxus_desktop::muda::Submenu;
 use std::rc::Rc;
-
+use rusqlite::{Connection};
 use crate::chthulhu_gen::CthulhuGenAll;
 use crate::diceboard::DiceBoard;
+use crate::gen_struct::cthulhu_struct::Character;
 use crate::page2::Page2;
 mod chthulhu_gen;
 mod diceboard;
 mod nav_bandeau;
 mod page2;
 mod utils;
+mod gen_struct;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 const DB: Asset = asset!("/assets/cthulhuhack.db");
@@ -31,6 +33,14 @@ enum CurrentView {
     CthulhuGen,
     Page2,
 }
+
+#[derive(Clone, Debug)]
+struct AppContext {
+    connect: Rc<Connection>,
+    cthulhu_char : Character,
+}
+
+
 
 fn main() {
     // on détermine un config minimale pour l'app.
@@ -54,13 +64,23 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    use_context_provider(|| {
+
+    use_context_provider(||
+     AppContext{ connect: Rc::new(
+            rusqlite::Connection::open(DB.bundled().absolute_source_path())
+                .expect("Failed to open database"),
+        ), cthulhu_char: Character::default()  }
+    );
+
+
+    /*use_context_provider(|| {
         Rc::new(
             rusqlite::Connection::open(DB.bundled().absolute_source_path())
                 .expect("Failed to open database"),
-            //rusqlite::Connection::open("assets/cthulhuhack.db").expect("Failed to open database"),
         )
-    });
+    });*/
+    
+    use_context_provider(|| Rc::new(Character::default()) );
 
     let mut current_view = use_signal(|| CurrentView::Dashboard);
 

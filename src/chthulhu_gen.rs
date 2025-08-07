@@ -1,4 +1,4 @@
-use std::{collections::HashSet, rc::Rc};
+use std::{cell::RefCell, collections::{HashMap, HashSet}, rc::Rc};
 
 use dioxus::{logger::tracing::info, prelude::*};
 use rand::{Rng, SeedableRng};
@@ -6,7 +6,10 @@ use rand::{Rng, SeedableRng};
 use rusqlite::{Connection};
 use serde::{Deserialize, Serialize};
 
-//use crate::DB;
+use crate::{gen_struct::cthulhu_struct::{Archetype, AtoutGenerique}, AppContext};
+
+
+
 
 ///Genrateur des valeurs de caracteristiques (entre 4 et 18)
 pub(crate) fn get_random_carac() -> i32 {
@@ -49,28 +52,13 @@ fn get_archetype_base(arch: Vec<Archetype>, target: &str) -> String {
     result
 }
 
-/// Structure de retour de la requete SQLITE pour les archetype.
-/// 
-#[derive(Debug, Deserialize, Serialize, Default)]
-struct Archetype {
-    index: u32,
-    name: String,
-    capacite_spe_base: String,
-}
 
-/// Structure de retour de la requete SQLITE pour les atouts.
-/// 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
-struct AtoutGenerique {
-    index: u32,
-    name: String,
-    atout_desc: String,
-}
 
 /// Requet vers la base sqlite pour obtenir les atout
 /// TODO : check des atouts avancés ?
 fn get_atout_generique() -> Vec<AtoutGenerique> {
-    let conn: Rc<Connection> = use_context();
+    let ctx = use_context::<AppContext>();
+    let conn: Rc<Connection> = ctx.connect; 
     let mut rqst_atout = conn.prepare("select * from atout_generique").unwrap();
 
     rqst_atout
@@ -89,7 +77,8 @@ fn get_atout_generique() -> Vec<AtoutGenerique> {
 ///Requete vers la base sqlite pour obtenir les données d'archetypes.
 /// 
 fn get_archetype() -> Vec<Archetype> {
-    let conn: Rc<Connection> = use_context();
+    let ctx = use_context::<AppContext>();
+    let conn: Rc<Connection> = ctx.connect;
     let mut rqst = conn.prepare("select * from archetype").unwrap();
 
     rqst.query_map([], |r| {
