@@ -1,15 +1,19 @@
-use std::{cell::RefCell, collections::{HashMap, HashSet}, rc::Rc};
+use std::{
+    cell::RefCell,
+    collections::{HashMap, HashSet},
+    rc::Rc,
+};
 
 use dioxus::{logger::tracing::info, prelude::*};
 use rand::{Rng, SeedableRng};
 
-use rusqlite::{Connection};
+use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 
-use crate::{gen_struct::cthulhu_struct::{Archetype, AtoutGenerique}, AppContext};
-
-
-
+use crate::{
+    gen_struct::cthulhu_struct::{Archetype, AtoutGenerique, Caracterisques},
+    AppContext,
+};
 
 ///Genrateur des valeurs de caracteristiques (entre 4 et 18)
 pub(crate) fn get_random_carac() -> i32 {
@@ -52,13 +56,11 @@ fn get_archetype_base(arch: Vec<Archetype>, target: &str) -> String {
     result
 }
 
-
-
 /// Requet vers la base sqlite pour obtenir les atout
 /// TODO : check des atouts avancés ?
 fn get_atout_generique() -> Vec<AtoutGenerique> {
     let ctx = use_context::<AppContext>();
-    let conn: Rc<Connection> = ctx.connect; 
+    let conn: Rc<Connection> = ctx.connect;
     let mut rqst_atout = conn.prepare("select * from atout_generique").unwrap();
 
     rqst_atout
@@ -75,7 +77,7 @@ fn get_atout_generique() -> Vec<AtoutGenerique> {
 }
 
 ///Requete vers la base sqlite pour obtenir les données d'archetypes.
-/// 
+///
 fn get_archetype() -> Vec<Archetype> {
     let ctx = use_context::<AppContext>();
     let conn: Rc<Connection> = ctx.connect;
@@ -94,18 +96,17 @@ fn get_archetype() -> Vec<Archetype> {
 }
 
 ///On assemble les parties de la vue ici.
-pub(crate) fn CthulhuGenAll() -> Element{
-    rsx!{
+pub(crate) fn CthulhuGenAll() -> Element {
+    rsx! {
         ChackGenerate {  },
         Get_atout {  }
     }
 }
 ///
 /// Ou l'on genere la partie haute de cthulhu genrator avec les caracteristique.
-/// 
+///
 #[component]
 pub(crate) fn ChackGenerate() -> Element {
-
     let mut sig_fo = use_signal(|| 0);
     let mut sig_dex = use_signal(|| 0);
     let mut sig_co = use_signal(|| 0);
@@ -124,6 +125,25 @@ pub(crate) fn ChackGenerate() -> Element {
                     sig_int.set(get_random_carac());
                     sig_sag.set(get_random_carac());
                     sig_cha.set(get_random_carac());
+
+                    let mut ctx = use_context::<AppContext>();
+                    info!(" av {}", ctx.cthulhu_char);
+                    ctx.cthulhu_char.carac = Caracterisques{
+                        fo:sig_fo(),
+                        con:sig_co(),
+                        dex:sig_dex(),
+                        sag:sig_sag(),
+                        int:sig_int(),
+                        cha:sig_cha(),
+                        fo_bonus:get_bonus(sig_fo()),
+                        co_bonus: get_bonus(sig_co()),
+                        dex_bonus: get_bonus(sig_dex()),
+                        sage_bonus: get_bonus(sig_sag()),
+                        int_bonus: get_bonus(sig_int()),
+                        cha_bonus: get_bonus(sig_cha())
+                    };
+                    info!(" ap: {}", ctx.cthulhu_char);
+
                 },"Generate Value" }
             }
             div {  class:"col"}
@@ -215,7 +235,6 @@ pub(crate) fn ChackGenerate() -> Element {
 
 #[component]
 pub(crate) fn Get_atout() -> Element {
-
     let archetypes = get_archetype();
     let mut name_vec = Vec::new();
     for arch in &archetypes {
@@ -235,14 +254,14 @@ pub(crate) fn Get_atout() -> Element {
     let mut sig_name = use_signal(String::new);
     let txt_base = get_archetype_base(archetypes, &sig_name.read());
 
-    let mut sig_atout_name= use_signal(String::new);
+    let mut sig_atout_name = use_signal(String::new);
 
     let mut selected_atout = use_signal(HashSet::<Rc<String>>::new);
-    
+
     //info!("{:?}", selected_atout);
     //info!("txt base : {txt_base}");
 
-     rsx!{
+    rsx! {
         div { class: "row mt-3",
             div { class:"col",
                 div {  class:"row",
@@ -322,19 +341,17 @@ pub(crate) fn Get_atout() -> Element {
                                 }
                             }
                         }
-                
+
                     }
                 }
 
-            }//fin col1 
+            }//fin col1
             // besoin d'ajouter une ligne en plus pour mettre en vis à vis les choix d'archetypes.
         }
         div { class:"row mt-5",
-            div { class:"col", 
+            div { class:"col",
                 button { class:"btn btn-warning", "Generer PDF" }
             }
         }
     }
-
 }
-

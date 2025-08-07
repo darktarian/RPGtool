@@ -105,7 +105,7 @@ pub(crate) fn DiceBoard() -> Element {
                 p {class:"text-light",  "Keeping the highest dice : H + nb dice"}
                 p {class:"text-light",  "Keeping the lowest dice : L + nb dice"}
             }
-          } 
+          }
         }
 
     }

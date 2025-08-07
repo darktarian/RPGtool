@@ -1,3 +1,7 @@
+use crate::chthulhu_gen::CthulhuGenAll;
+use crate::diceboard::DiceBoard;
+use crate::gen_struct::cthulhu_struct::Character;
+use crate::page2::Page2;
 use dioxus::desktop::tao::dpi::LogicalSize;
 use dioxus::desktop::tao::window::Theme;
 use dioxus::desktop::tao::window::WindowBuilder;
@@ -7,18 +11,14 @@ use dioxus_desktop::muda::Menu;
 use dioxus_desktop::muda::MenuItem;
 use dioxus_desktop::muda::PredefinedMenuItem;
 use dioxus_desktop::muda::Submenu;
+use rusqlite::Connection;
 use std::rc::Rc;
-use rusqlite::{Connection};
-use crate::chthulhu_gen::CthulhuGenAll;
-use crate::diceboard::DiceBoard;
-use crate::gen_struct::cthulhu_struct::Character;
-use crate::page2::Page2;
 mod chthulhu_gen;
 mod diceboard;
+mod gen_struct;
 mod nav_bandeau;
 mod page2;
 mod utils;
-mod gen_struct;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 const DB: Asset = asset!("/assets/cthulhuhack.db");
@@ -37,10 +37,8 @@ enum CurrentView {
 #[derive(Clone, Debug)]
 struct AppContext {
     connect: Rc<Connection>,
-    cthulhu_char : Character,
+    cthulhu_char: Character,
 }
-
-
 
 fn main() {
     // on détermine un config minimale pour l'app.
@@ -64,14 +62,13 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-
-    use_context_provider(||
-     AppContext{ connect: Rc::new(
+    use_context_provider(|| AppContext {
+        connect: Rc::new(
             rusqlite::Connection::open(DB.bundled().absolute_source_path())
                 .expect("Failed to open database"),
-        ), cthulhu_char: Character::default()  }
-    );
-
+        ),
+        cthulhu_char: Character::default(),
+    });
 
     /*use_context_provider(|| {
         Rc::new(
@@ -79,8 +76,8 @@ fn App() -> Element {
                 .expect("Failed to open database"),
         )
     });*/
-    
-    use_context_provider(|| Rc::new(Character::default()) );
+
+    use_context_provider(|| Rc::new(Character::default()));
 
     let mut current_view = use_signal(|| CurrentView::Dashboard);
 
@@ -206,4 +203,3 @@ fn create_menu() -> Menu {
 
     menu
 }
-
