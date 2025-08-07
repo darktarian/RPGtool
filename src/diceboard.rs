@@ -1,4 +1,4 @@
-use dioxus::prelude::*;
+use dioxus::{html::div, prelude::*};
 use ndm::{Dice, RollSet};
 
 #[component]
@@ -98,6 +98,14 @@ pub(crate) fn DiceBoard() -> Element {
             }
             //un affichage de tous les dés générés pour le jet
             div { class:"col", div { class:"border border-warning-subtle p-3 text-start", " Tous les dés : {sig_all_dice}" } }
+        }
+        div { class:"row mt-5", div {class:"col",
+            div{ p {class:"text-light",  "[count]d<sides>[/<H|L><keep>][![fuse]]"}
+                p {class:"text-light",  "! for exploding dice"}
+                p {class:"text-light",  "Keeping the highest dice : H + nb dice"}
+                p {class:"text-light",  "Keeping the lowest dice : L + nb dice"}
+            }
+          } 
         }
 
     }

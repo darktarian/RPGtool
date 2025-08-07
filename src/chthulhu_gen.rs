@@ -1,13 +1,17 @@
-use std::{collections::HashSet, rc::Rc};
+use std::{cell::RefCell, collections::{HashMap, HashSet}, rc::Rc};
 
 use dioxus::{logger::tracing::info, prelude::*};
 use rand::{Rng, SeedableRng};
 
-use rusqlite::Connection;
+use rusqlite::{Connection};
 use serde::{Deserialize, Serialize};
 
-//use crate::DB;
+use crate::{gen_struct::cthulhu_struct::{Archetype, AtoutGenerique}, AppContext};
 
+
+
+
+///Genrateur des valeurs de caracteristiques (entre 4 et 18)
 pub(crate) fn get_random_carac() -> i32 {
     let val = getrandom::u64().unwrap();
     let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
@@ -20,6 +24,8 @@ pub(crate) fn get_a_dice(max: u32) -> u32 {
     rng.random_range(1..max)
 }
 
+///
+/// Petite fonction pour attribuer les bonus au caracteristiques.
 pub(crate) fn get_bonus(val: i32) -> String {
     match val {
         4..=5 => "-3".to_string(),
@@ -46,27 +52,13 @@ fn get_archetype_base(arch: Vec<Archetype>, target: &str) -> String {
     result
 }
 
-#[derive(Debug, Deserialize, Serialize, Default)]
-struct ArchetypeJson {
-    datas: Vec<Archetype>,
-}
 
-#[derive(Debug, Deserialize, Serialize, Default)]
-struct Archetype {
-    index: u32,
-    name: String,
-    capacite_spe_base: String,
-}
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
-struct AtoutGenerique {
-    index: u32,
-    name: String,
-    atout_desc: String,
-}
-
+/// Requet vers la base sqlite pour obtenir les atout
+/// TODO : check des atouts avancés ?
 fn get_atout_generique() -> Vec<AtoutGenerique> {
-    let conn: Rc<Connection> = use_context();
+    let ctx = use_context::<AppContext>();
+    let conn: Rc<Connection> = ctx.connect; 
     let mut rqst_atout = conn.prepare("select * from atout_generique").unwrap();
 
     rqst_atout
@@ -82,8 +74,11 @@ fn get_atout_generique() -> Vec<AtoutGenerique> {
         .unwrap()
 }
 
+///Requete vers la base sqlite pour obtenir les données d'archetypes.
+/// 
 fn get_archetype() -> Vec<Archetype> {
-    let conn: Rc<Connection> = use_context();
+    let ctx = use_context::<AppContext>();
+    let conn: Rc<Connection> = ctx.connect;
     let mut rqst = conn.prepare("select * from archetype").unwrap();
 
     rqst.query_map([], |r| {
@@ -98,23 +93,18 @@ fn get_archetype() -> Vec<Archetype> {
     .unwrap()
 }
 
+///On assemble les parties de la vue ici.
 pub(crate) fn CthulhuGenAll() -> Element{
     rsx!{
         ChackGenerate {  },
         Get_atout {  }
     }
 }
-
+///
+/// Ou l'on genere la partie haute de cthulhu genrator avec les caracteristique.
+/// 
 #[component]
 pub(crate) fn ChackGenerate() -> Element {
-    let archetypes = get_archetype();
-    let mut name_vec = Vec::new();
-    for arch in &archetypes {
-        name_vec.push(arch.name.clone());
-        println!("result base : {arch:?}");
-    }
-
-    println!("{name_vec:?}");
 
     let mut sig_fo = use_signal(|| 0);
     let mut sig_dex = use_signal(|| 0);
@@ -122,12 +112,6 @@ pub(crate) fn ChackGenerate() -> Element {
     let mut sig_int = use_signal(|| 0);
     let mut sig_sag = use_signal(|| 0);
     let mut sig_cha = use_signal(|| 0);
-
-    let mut sig_name = use_signal(String::new);
-
-
-    let txt_base = get_archetype_base(archetypes, &sig_name.read());
-    info!("txt base : {txt_base}");
 
     rsx! {
         div {  class:"row mb-2",
@@ -219,32 +203,7 @@ pub(crate) fn ChackGenerate() -> Element {
                         }
                     }
                 }
-                div { class: "row mt-3",
-                    div { class:"col",
-                        label { "Choisissez votre classe : " }
-                        select {
-                                class: "btn btn-cth-eldritch",
-                                value: "{sig_name}",
-                                onchange: move |evt| {
-                                    sig_name.set(evt.value());
-                                },
-                                option { value: "...", "..." }
-                               for name in name_vec  {
-                                    option { value: "{name}", "{name}" }
-                                }
-                        }
 
-                    }
-                }
-                div { class:"row",
-                    div { class:"col mt-3",
-                        if (sig_name.read().as_str() != String::new()) && (sig_name.read().as_str() != "...") {
-                            div { id:"text-archetype", class:"border text-bg-light p-3 rounded-2",
-                                    {txt_base}
-                            }
-                        }
-                    }
-                }
                 div {  class:"row",
 
                 }
@@ -256,6 +215,16 @@ pub(crate) fn ChackGenerate() -> Element {
 
 #[component]
 pub(crate) fn Get_atout() -> Element {
+
+    let archetypes = get_archetype();
+    let mut name_vec = Vec::new();
+    for arch in &archetypes {
+        name_vec.push(arch.name.clone());
+        println!("result base : {arch:?}");
+    }
+
+    println!("{name_vec:?}");
+
     let atouts_gen = get_atout_generique();
     let mut atout_names = Vec::new();
 
@@ -263,67 +232,109 @@ pub(crate) fn Get_atout() -> Element {
         atout_names.push(atout.name);
     }
 
-    let mut selected_atout = use_signal(HashSet::<String>::new);
-    info!("{:?}", selected_atout);
+    let mut sig_name = use_signal(String::new);
+    let txt_base = get_archetype_base(archetypes, &sig_name.read());
 
-    let mut all_atouts = vec![vec![], vec![], vec![], vec![], vec![], vec![], vec![], vec![]];
-    for (x,atout) in atout_names.iter().enumerate(){
-        let atout_cloned = atout.clone();
-        all_atouts[x%8].push(
-            rsx!{
-                div {
-                    input {
-                        class: "form-check-input",
-                        r#type: "checkbox",
-                        id: "{atout}",
-                        checked: selected_atout().contains(&atout_cloned),
-                        oninput: move |evt| {
+    let mut sig_atout_name= use_signal(String::new);
 
-                            if evt.checked(){
-                                let mut sc = selected_atout();
-                                sc.insert(atout_cloned.clone());
-                                selected_atout.set(sc);
-                                
-                            }else {
-                                //println!("3 remove");
-                                let mut sc = selected_atout();
-                                sc.remove(&atout_cloned);
-                                selected_atout.set(sc);
-                            }
-                        },
-                    }
-                    label {
-                        class:"form-check-label",
-                        " {atout}"
-                    }
-                }
-            }
-        );
-     }
+    let mut selected_atout = use_signal(HashSet::<Rc<String>>::new);
+    
+    //info!("{:?}", selected_atout);
+    //info!("txt base : {txt_base}");
 
      rsx!{
-        for elem in all_atouts {
-            div { class: "row",
-                for sub_item in elem{
-                    div{ class:"col-sm",
-                        {sub_item}
+        div { class: "row mt-3",
+            div { class:"col",
+                div {  class:"row",
+                    div {  class:"col-5",
+                        ///////
+                        label { "Choisissez votre atout : " }
+                        br {  }
+                        select {
+                                class: "btn",
+                                value: "{sig_atout_name}",
+                                onchange: move |evt| {
+                                    sig_atout_name.set(evt.value());
+                                    let mut sc = selected_atout();
+                                    info!("{sig_atout_name}");
+                                    //on limite à 4 le nombre d'atout à choisir
+                                    if sc.len()<4{
+                                        sc.insert(sig_atout_name().into());
+                                        selected_atout.set(sc);
+                                    }
+                                },
+                                option { value: "...", "..." }
+                                for atout in atout_names  {
+                                    option { value: "{atout}", "{atout}" }
+                                }
+                        }
+                        ///////
+                        div { class:"row mt-2",
+                            div { class: "col",
+                                label { "les selectionnés:" }
+                                div {
+                                    for select in selected_atout().iter().cloned(){
+                                            "{select} "
+                                        button {class: "btn btn-sm btn-close btn-danger",
+                                                type:"button",
+                                                onclick: move |_| {
+                                                    let mut sc = selected_atout();
+                                                    sc.remove(&select);
+                                                    selected_atout.set(sc);
+                                                },
+                                            //"🗑"
+                                        }
+                                        br {  }
+                                    }
+                                }
+                            }//end des atouts selectionnés
+                        }
+                        //
                     }
-                }
-            }
-        }
-        
-        div { class:"row",
-                div { class: "col",
-                    label { "les selectionnés:" }
-                    div {
-                        ul {
-                            for select in selected_atout().iter(){
-                                li { "{select:?}" }
+                    div{class:"col-1",
+                        div{class:"badge text-bg-danger fs-6", "OU" }
+                    }
+                    div{class:"col-5",
+                        //mettre ici le choix des archétypes.
+                        div { class: "row",
+                            div { class:"col ml-3",
+                                label { "Choisissez votre classe : " }
+                                select {
+                                        class: "btn",
+                                        value: "{sig_name}",
+                                        onchange: move |evt| {
+                                            sig_name.set(evt.value());
+                                        },
+                                        option { value: "...", "..." }
+                                    for name in name_vec  {
+                                            option { value: "{name}", "{name}" }
+                                        }
+                                }
+
                             }
                         }
-                     }
-                }//end des atouts selectionnés
-             }
+                        div { class:"row",
+                            div { class:"col mt-3",
+                                if (sig_name.read().as_str() != String::new()) && (sig_name.read().as_str() != "...") {
+                                    div { id:"text-archetype", class:"border text-bg-light p-3 rounded-2",
+                                            {txt_base}
+                                    }
+                                }
+                            }
+                        }
+                
+                    }
+                }
+
+            }//fin col1 
+            // besoin d'ajouter une ligne en plus pour mettre en vis à vis les choix d'archetypes.
+        }
+        div { class:"row mt-5",
+            div { class:"col", 
+                button { class:"btn btn-warning", "Generer PDF" }
+            }
+        }
     }
+
 }
 
