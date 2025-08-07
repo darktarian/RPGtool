@@ -141,8 +141,8 @@ fn App() -> Element {
 fn render_current_view(view: CurrentView) -> Element {
     match view {
         CurrentView::Dashboard => rsx! { DiceBoard {} },
-        CurrentView::CthulhuGen => rsx! { CthulhuGenAll {  } },
-        CurrentView::Page2 => rsx! { Page2 {  } },
+        CurrentView::CthulhuGen => rsx! { CthulhuGenAll {} },
+        CurrentView::Page2 => rsx! { Page2 {} },
     }
 }
 

@@ -1,4 +1,4 @@
-use dioxus::{html::div, prelude::*};
+use dioxus::prelude::*;
 use ndm::{Dice, RollSet};
 
 #[component]

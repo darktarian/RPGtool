@@ -1,15 +1,11 @@
 use std::{
-    cell::RefCell,
-    collections::{HashMap, HashSet},
+    collections::{HashSet},
     rc::Rc,
 };
 
 use dioxus::{logger::tracing::info, prelude::*};
 use rand::{Rng, SeedableRng};
-
 use rusqlite::Connection;
-use serde::{Deserialize, Serialize};
-
 use crate::{
     gen_struct::cthulhu_struct::{Archetype, AtoutGenerique, Caracterisques},
     AppContext,
@@ -22,11 +18,11 @@ pub(crate) fn get_random_carac() -> i32 {
     rng.random_range(4..18)
 }
 
-pub(crate) fn get_a_dice(max: u32) -> u32 {
+/*pub(crate) fn get_a_dice(max: u32) -> u32 {
     let val = getrandom::u64().unwrap();
     let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
     rng.random_range(1..max)
-}
+}*/
 
 ///
 /// Petite fonction pour attribuer les bonus au caracteristiques.
@@ -96,12 +92,15 @@ fn get_archetype() -> Vec<Archetype> {
 }
 
 ///On assemble les parties de la vue ici.
+#[component]
 pub(crate) fn CthulhuGenAll() -> Element {
     rsx! {
         ChackGenerate {  },
         Get_atout {  }
     }
 }
+
+
 ///
 /// Ou l'on genere la partie haute de cthulhu genrator avec les caracteristique.
 ///
@@ -242,7 +241,7 @@ pub(crate) fn Get_atout() -> Element {
         println!("result base : {arch:?}");
     }
 
-    println!("{name_vec:?}");
+    //println!("{name_vec:?}");
 
     let atouts_gen = get_atout_generique();
     let mut atout_names = Vec::new();
