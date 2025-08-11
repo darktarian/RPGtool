@@ -1,80 +1,74 @@
 use dioxus::prelude::*;
-use ndm::{Dice, RollSet};
+use ndm::{Dice, DiceParseError, RollSet};
+
+fn get_a_dice(dice: &str) -> String{
+        match dice.parse::<Dice>(){
+        Ok(de) =>  format!("{} => {}",dice,de.total().to_string()),
+        Err(_) => DiceParseError::Unparseable.to_string(),
+    }
+}
 
 #[component]
 pub(crate) fn DiceBoard() -> Element {
-    //let mut selected_options = use_signal(HashSet::<String>::new);
+    
     let mut sig_result = use_signal(String::new);
-    //let mut sig_result2 = use_signal(String::new);
     let mut sig_custom_dice = use_signal(String::new);
     let mut sig_all_dice = use_signal(String::new);
 
     rsx! {
-
-        div {  class:"row pb-1 border-bottom border-warning-subtle", div { class:"col", div {class:"text-warning",  "Set classique " } }}
-        div{ class: "container mt-4 mb-1",
+        div {  class:"pb-1 border-bottom border-warning-subtle", 
+         div {class:"text-warning",  "Set classique " } 
+        }
+        div{ class: "container mt-2 mb-2",
                 div { class:"btn-dice", id:"btn3", onclick: move |_event| {
-                        let d3 = "1d3".parse::<Dice>().unwrap();
-                        sig_result.set(d3.total().to_string());
+                    sig_result.set(get_a_dice("1d3"));
                 }, "1D3" }
                 div { class:"btn-dice", id:"btn4", onclick: move |_event| {
-                        let d4 = "1d4".parse::<Dice>().unwrap();
-                        sig_result.set(d4.total().to_string());
+                    sig_result.set(get_a_dice("1d4"));
                 }, "1D4" }
-
                 div { class:"btn-dice", id:"btn4", onclick: move |_event| {
-                        let d5 = "1d5".parse::<Dice>().unwrap();
-                        sig_result.set(d5.total().to_string());
+                    sig_result.set(get_a_dice("1d5"));
                 }, "1D5" }
                 div { class:"btn-dice", id:"btn6", onclick: move |_event| {
-                        let d6 = "1d6".parse::<Dice>().unwrap();
-                        sig_result.set(d6.total().to_string());
+                    sig_result.set(get_a_dice("1d6"));
                 }, "1D6" }
                 div { class:"btn-dice", id:"btn7", onclick: move |_event| {
-                        let d7 = "1d7".parse::<Dice>().unwrap();
-                        sig_result.set(d7.total().to_string());
-                }, "1D6" }
+                    sig_result.set(get_a_dice("1d7"));
+                }, "1D7" }
                 div { class:"btn-dice", id:"btn8", onclick: move |_event| {
-                        let d8 = "1d8".parse::<Dice>().unwrap();
-                        sig_result.set(d8.total().to_string());
+                    sig_result.set(get_a_dice("1d8"));
                 }, "1D8" }
                 div { class:"btn-dice", id:"btn10", onclick: move |_event| {
-                        let d10 = "1d10".parse::<Dice>().unwrap();
-                        sig_result.set(d10.total().to_string());
+                    sig_result.set(get_a_dice("1d10"));
                 }, "1D10" }
         }
         div{ class:"container mt-1 mb-1",
                 div { class:"btn-dice", id:"btn12", onclick: move |_event| {
-                        let d12 = "1d12".parse::<Dice>().unwrap();
-                        sig_result.set(d12.total().to_string());
+                    sig_result.set(get_a_dice("1d12"));
                 }, "1D12" }
                 div { class:"btn-dice", id:"btn14", onclick: move |_event| {
-                        let d14 = "1d14".parse::<Dice>().unwrap();
-                        sig_result.set(d14.total().to_string());
+                    sig_result.set(get_a_dice("1d14"));
                 }, "1D14" }
                 div { class:"btn-dice", id:"btn16", onclick: move |_event| {
-                        let d12 = "1d16".parse::<Dice>().unwrap();
-                        sig_result.set(d12.total().to_string());
+                    sig_result.set(get_a_dice("1d16"));
                 }, "1D16" }
                 div { class:"btn-dice", id:"btn20", onclick: move |_event| {
-                        let d20 = "1d20".parse::<Dice>().unwrap();
-                        sig_result.set(d20.total().to_string());
+                    sig_result.set(get_a_dice("1d20"));
                 }, "1D20" }
                 div { class:"btn-dice", id:"btn24", onclick: move |_event| {
-                        let d24 = "1d24".parse::<Dice>().unwrap();
-                        sig_result.set(d24.total().to_string());
+                    sig_result.set(get_a_dice("1d24"));
                 }, "1D24" }
                 div { class:"btn-dice", id:"btn30", onclick: move |_event| {
-                        let d30 = "1d30".parse::<Dice>().unwrap();
-                        sig_result.set(d30.total().to_string());
+                    sig_result.set(get_a_dice("1d30"));
                 }, "1D30" }
                 div { class:"btn-dice", id:"btn100", onclick: move |_event| {
-                        let d100 = "1d100".parse::<Dice>().unwrap();
-                        sig_result.set(d100.total().to_string());
+                    sig_result.set(get_a_dice("1d100"));
                 }, "1D100" }
         }
-        div {  class:"row mb-4 pb-1 border-bottom border-warning-subtle", div { class:"col", div {class:"text-warning",  "Dés custom " } }}
-        div { class:"row mb-2 mt-4",
+        div {  class:"row mt-2 mb-4 pb-1 border-bottom border-warning-subtle text-warning", 
+             "Dés custom "
+        }
+        div { class:"row mb-1 mt-4",
             div { class:"col-5",
                 input { class:"mr-2 form-control form-control-sm",
                     type:"text",
@@ -83,7 +77,6 @@ pub(crate) fn DiceBoard() -> Element {
                     value: "{sig_custom_dice}",
                     oninput: move |event| {sig_custom_dice.set(event.value());}
                  }
-
             }
             //dés custom
             div { class:"col-1",
@@ -117,7 +110,7 @@ pub(crate) fn DiceBoard() -> Element {
             }
         }
             div { class:"col-1",
-                                button {class: "btn btn-sm btn-outline-danger",
+                button {class: "btn btn-sm btn-outline-danger",
                     type:"button",
                     onclick: move |_| {
                             sig_custom_dice.set(String::new());
