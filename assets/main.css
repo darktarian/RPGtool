@@ -52,6 +52,34 @@ body {
   border-color: black;
 }
 
+
+.btn-dice {
+  display: inline-block;    
+  background-color: #f0c040; /* jaune doux */
+  color: #000;              
+  border: 1px solid #d9a520;
+  width: 50px;
+  height: 35px;     
+  line-height: 35px;      
+  text-align: center;  
+  /*padding: 2px; */          
+  font-size: 0.85rem;       
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none; 
+}
+
+.btn-dice:hover {
+  background-color: #e6b93a;
+  border-color: #c9981e;
+}
+
+
+
+
+
+
 .btn-cth-dark {
   background-color: #0b1f1a;
   color: #90c99c;
