@@ -1,15 +1,12 @@
 use dioxus::prelude::*;
 use ndm::{Dice, DiceParseError, RollSet};
 
-/*use tyche::{
-	dice::modifier::{Condition, Modifier},
-	Dice, Expr,
-}*/
+
 
 fn get_a_dice(dice: &str) -> String {
     match dice.parse::<Dice>() {
-        Ok(de) => format!("{} => {}", dice, de.total()),
-        Err(_) => "".to_string(),
+        Ok(de) => format!("{} => {}", dice, de.total().to_string()),
+        Err(_) => DiceParseError::Unparseable.to_string(),
     }
 }
 
