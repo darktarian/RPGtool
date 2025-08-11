@@ -257,8 +257,6 @@ pub(crate) fn Get_atout() -> Element {
 
     let mut selected_atout = use_signal(HashSet::<Rc<String>>::new);
 
-    //info!("{:?}", selected_atout);
-    //info!("txt base : {txt_base}");
 
     rsx! {
         div { class: "row mt-3",
@@ -353,4 +351,10 @@ pub(crate) fn Get_atout() -> Element {
             }
         }
     }
+}
+
+#[component]
+pub(crate) fn Get_metier() -> Element {
+
+    rsx!{}
 }

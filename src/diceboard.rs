@@ -14,43 +14,64 @@ pub(crate) fn DiceBoard() -> Element {
         div {  class:"row pb-1 border-bottom border-warning-subtle", div { class:"col", div {class:"text-warning",  "Set classique " } }}
         div{ class: "row mt-4 mb-4",
             div {  class:"col",
-                div { class:"btn btn-warning", id:"btn4", onclick: move |_event| {
+                div { class:"btn btn-warning w-75", id:"btn4", onclick: move |_event| {
                         let d4 = "1d4".parse::<Dice>().unwrap();
                         sig_result.set(d4.total().to_string());
                 }, "1D4" }
             }
             div { class:"col",
-                div { class:"btn btn-warning", id:"btn6", onclick: move |_event| {
+                div { class:"btn btn-warning w-75", id:"btn6", onclick: move |_event| {
                         let d6 = "1d6".parse::<Dice>().unwrap(); //Equation::new("1d6").unwrap();
                         sig_result.set(d6.total().to_string());
                 }, "1D6" }
             }
             div {  class:"col",
-                div { class:"btn btn-warning", id:"btn8", onclick: move |_event| {
+                div { class:"btn btn-warning w-75", id:"btn8", onclick: move |_event| {
                         let d8 = "1d8".parse::<Dice>().unwrap();
                         sig_result.set(d8.total().to_string());
                 }, "1D8" }
             }
             div {  class:"col",
-                div { class:"btn btn-warning", id:"btn10", onclick: move |_event| {
+                div { class:"btn btn-warning w-75", id:"btn10", onclick: move |_event| {
                         let d10 = "1d10".parse::<Dice>().unwrap();
                         sig_result.set(d10.total().to_string());
                 }, "1D10" }
             }
             div {  class:"col",
-                div { class:"btn btn-warning", id:"btn12", onclick: move |_event| {
+                div { class:"btn btn-warning w-75", id:"btn12", onclick: move |_event| {
                         let d12 = "1d12".parse::<Dice>().unwrap();
                         sig_result.set(d12.total().to_string());
                 }, "1D12" }
             }
             div {  class:"col",
-                div { class:"btn btn-warning w", id:"btn20", onclick: move |_event| {
+                div { class:"btn btn-warning w-75", id:"btn14", onclick: move |_event| {
+                        let d14 = "1d14".parse::<Dice>().unwrap();
+                        sig_result.set(d14.total().to_string());
+                }, "1D14" }
+            }
+
+        }
+        div{ class:"row mt-2 mb-2",
+            div {  class:"col-2",
+                div { class:"btn btn-warning w-75", id:"btn16", onclick: move |_event| {
+                        let d12 = "1d16".parse::<Dice>().unwrap();
+                        sig_result.set(d12.total().to_string());
+                }, "1D16" }
+            }
+            div {  class:"col-2",
+                div { class:"btn btn-warning w-75", id:"btn20", onclick: move |_event| {
                         let d20 = "1d20".parse::<Dice>().unwrap();
                         sig_result.set(d20.total().to_string());
                 }, "1D20" }
             }
-             div {  class:"col",
-                div { class:"btn btn-warning", id:"btn30", onclick: move |_event| {
+            div {  class:"col-2",
+                div { class:"btn btn-warning w-75", id:"btn24", onclick: move |_event| {
+                        let d24 = "1d24".parse::<Dice>().unwrap();
+                        sig_result.set(d24.total().to_string());
+                }, "1D24" }
+            }
+             div {  class:"col-2",
+                div { class:"btn btn-warning w-75", id:"btn30", onclick: move |_event| {
                         let d30 = "1d30".parse::<Dice>().unwrap();
                         sig_result.set(d30.total().to_string());
                 }, "1D30" }
@@ -89,15 +110,18 @@ pub(crate) fn DiceBoard() -> Element {
                 sig_result.set(total);
             }, "Roll" } }
         }
+        div {class:"text-warning border-bottom border-warning-subtle",  "Dices total value: " }
         //zone des résultats.
         div { class:"row mt-2",
             div { class:"col",
-                div { class: "border border-warning-subtle p-3", id: "result",
-                    " Total : {sig_result}"
+                div { class: "bg-dark round rounded-2 p-3", id: "result",
+                    "{sig_result}"
                  }
             }
             //un affichage de tous les dés générés pour le jet
-            div { class:"col", div { class:"border border-warning-subtle p-3 text-start", " Tous les dés : {sig_all_dice}" } }
+            if !sig_custom_dice().is_empty(){
+                div { class:"col ", div { class:"border border-warning-subtle p-3 text-start", " Tous les dés : {sig_all_dice}" } }
+            }
         }
         div { class:"row mt-5", div {class:"col",
             div{ p {class:"text-light",  "[count]d<sides>[/<H|L><keep>][![fuse]]"}
