@@ -14,6 +14,7 @@ use dioxus_desktop::muda::Submenu;
 use rusqlite::Connection;
 use std::rc::Rc;
 mod chthulhu_gen;
+mod dice_custom;
 mod diceboard;
 mod gen_struct;
 mod nav_bandeau;

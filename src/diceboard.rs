@@ -1,7 +1,8 @@
+use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
 use ndm::{Dice, DiceParseError, RollSet};
 
-
+use crate::dice_custom::get_custom_dice;
 
 fn get_a_dice(dice: &str) -> String {
     match dice.parse::<Dice>() {
@@ -81,22 +82,9 @@ pub(crate) fn DiceBoard() -> Element {
             div { class:"col-1",
                     div { class:"btn btn-sm btn-warning", id:"custom_dice_val", onclick: move |_event|{
                     let dice_txt = sig_custom_dice.read();
-
-                    let (all, total) = match dice_txt.parse::<Dice>(){
-                        Ok(d) => (vec_u16_to_string(d.all_rolls()),d.total().to_string()),
-                        Err(_) => {
-                            let roll = dice_txt.parse::<RollSet>().ok();
-
-                            if let Some(rolled) = roll {
-                                ("".to_string(), format!("{}", rolled))
-                            }  else {
-                                ("Error : Format non pris en charge.".to_string(), "".to_string())
-                            }
-                        }
-                    };
-
-                    sig_all_dice.set(all);
-                    sig_result.set(total);
+                    //info!("->>>{}",get_custom_dice(&dice_txt));
+                    //sig_all_dice.set(all);
+                    sig_result.set(get_custom_dice(&dice_txt));
                 }, "Roll" }
             }
             div { class:"col-1",
@@ -126,17 +114,49 @@ pub(crate) fn DiceBoard() -> Element {
                     "{sig_result}"
                  }
             }
-            //un affichage de tous les dés générés pour le jet
-            if !sig_custom_dice().is_empty(){
-                div { class:"col ", div { class:"border border-warning-subtle p-3 text-start", " Tous les dés : {sig_all_dice}" } }
-            }
         }
-        div { class:"row mt-5", div {class:"col",
-            div{ pre {class:"text-light",  
-            "[count]d<sides>[/<H|L><keep>][![fuse]]
-            ! for exploding dice
-            Keeping the highest dice : H + nb dice
-            Keeping the lowest dice : L + nb dice"}
+        div { class:"row mt-3", div {class:"col",
+            div{ 
+                button {  
+                    class:"btn-help",
+                    type:"button",
+                    "data-bs-toggle":"collapse",
+                    "data-bs-target":"#collapseExample",
+                    "aria-expanded":"false",
+                    "aria-controls":"collapseExample",
+                    "click -> Help"
+                }
+                
+                div{id:"collapseExample", class:"collapse",
+                    div {
+                        style: "font-family: monospace; font-size: 0.9rem; line-height: 1.4;",
+                        div { style: "font-weight: bold; margin-top: 0.5rem;", "Arithmetic" }
+                        div { "Addition: 2d6 + 2" }
+                        div { "Subtraction: 2d6 - 2" }
+                        div { "Multiplication: 2d6 * 2" }
+                        div { "Division (integer, rounded down): 2d6 / 2" }
+                        div { "Division (integer, rounded up): 2d6 \\ 2" }
+                        div { "Standard mathematical order of operations" }
+                        div { "Parenthetical grouping: (2d6 + 2) * 2" }br {  }
+                        div { style: "font-weight: bold; margin-top: 0.5rem;", "Dice modifiers" }
+                        div { "Keep highest (advantage): 2d20kh, 2d20k" }
+                        div { style: "margin-left: 1rem;", "With specific amount to keep: 3d20kh2" }
+                        div { "Keep lowest (disadvantage): 2d20kl" }
+                        div { style: "margin-left: 1rem;", "With specific amount to keep: 3d20kl2" }
+                        div { "Reroll (once): 4d6r" }
+                        div { style: "margin-left: 1rem;", "With specific condition: 4d6r>4, 4d6r>=5, 4d6r<3, 4d6r<=2, 4d6r4" }
+                        div { "Reroll (recursive): 4d6rr" }
+                        div { style: "margin-left: 1rem;", "With specific condition: 4d6rr>4, 4d6rr>=5, 4d6rr<3, 4d6rr<=2, 4d6rr4" }
+                        div { "Explode (recursive): 4d6x" }
+                        div { style: "margin-left: 1rem;", "With specific condition: 4d6x>4, 4d6x>=5, 4d6x<3, 4d6x<=2, 4d6x4" }
+                        div { "Explode (once): 4d6xo" }
+                        div { style: "margin-left: 1rem;", "With specific condition: 4d6xo>4, 4d6xo>=5, 4d6xo<3, 4d6xo<=2, 4d6xo4" }
+                        div { "Minimum: 4d8min3" }
+                        div { "Maximum: 4d8max6" }br {  }
+                        div { style: "font-weight: bold; margin-top: 0.5rem;", "Dice modifier chaining" }
+                        div { "Applied in the order they're specified: 4d6rr1x>4, 8d8min2kh4xo" }
+                    }
+                }
             }
           }
         }

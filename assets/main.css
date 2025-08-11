@@ -75,6 +75,28 @@ body {
   border-color: #c9981e;
 }
 
+.btn-help {
+  display: inline-block;    
+  background-color: #0d910f;
+  color: #000;              
+  border: 1px solid #134d09;
+  width: 70px;
+  height: 40px;     
+  line-height: 40px;      
+  text-align: center;  
+  padding: 2px;          
+  font-size: 0.85rem;       
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none; 
+}
+
+.btn-help:hover {
+  background-color: #8ae63a;
+  border-color: #164b0e;
+}
+
 
 
 
