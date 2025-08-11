@@ -1,23 +1,22 @@
 use dioxus::prelude::*;
 use ndm::{Dice, DiceParseError, RollSet};
 
-fn get_a_dice(dice: &str) -> String{
-        match dice.parse::<Dice>(){
-        Ok(de) =>  format!("{} => {}",dice,de.total().to_string()),
+fn get_a_dice(dice: &str) -> String {
+    match dice.parse::<Dice>() {
+        Ok(de) => format!("{} => {}", dice, de.total().to_string()),
         Err(_) => DiceParseError::Unparseable.to_string(),
     }
 }
 
 #[component]
 pub(crate) fn DiceBoard() -> Element {
-    
     let mut sig_result = use_signal(String::new);
     let mut sig_custom_dice = use_signal(String::new);
     let mut sig_all_dice = use_signal(String::new);
 
     rsx! {
-        div {  class:"pb-1 border-bottom border-warning-subtle", 
-         div {class:"text-warning",  "Set classique " } 
+        div {  class:"pb-1 border-bottom border-warning-subtle",
+         div {class:"text-warning",  "Set classique " }
         }
         div{ class: "container mt-2 mb-2",
                 div { class:"btn-dice", id:"btn3", onclick: move |_event| {
@@ -65,9 +64,7 @@ pub(crate) fn DiceBoard() -> Element {
                     sig_result.set(get_a_dice("1d100"));
                 }, "1D100" }
         }
-        div {  class:"row mt-2 mb-4 pb-1 border-bottom border-warning-subtle text-warning", 
-             "Dés custom "
-        }
+        div {  class:"row mt-2 mb-4 pb-1 border-bottom border-warning-subtle text-warning","Dés custom"}
         div { class:"row mb-1 mt-4",
             div { class:"col-5",
                 input { class:"mr-2 form-control form-control-sm",
