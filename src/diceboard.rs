@@ -1,10 +1,15 @@
 use dioxus::prelude::*;
 use ndm::{Dice, DiceParseError, RollSet};
 
+/*use tyche::{
+	dice::modifier::{Condition, Modifier},
+	Dice, Expr,
+}*/
+
 fn get_a_dice(dice: &str) -> String {
     match dice.parse::<Dice>() {
-        Ok(de) => format!("{} => {}", dice, de.total().to_string()),
-        Err(_) => DiceParseError::Unparseable.to_string(),
+        Ok(de) => format!("{} => {}", dice, de.total()),
+        Err(_) => "".to_string(),
     }
 }
 
@@ -130,10 +135,11 @@ pub(crate) fn DiceBoard() -> Element {
             }
         }
         div { class:"row mt-5", div {class:"col",
-            div{ p {class:"text-light",  "[count]d<sides>[/<H|L><keep>][![fuse]]"}
-                p {class:"text-light",  "! for exploding dice"}
-                p {class:"text-light",  "Keeping the highest dice : H + nb dice"}
-                p {class:"text-light",  "Keeping the lowest dice : L + nb dice"}
+            div{ pre {class:"text-light",  
+            "[count]d<sides>[/<H|L><keep>][![fuse]]
+            ! for exploding dice
+            Keeping the highest dice : H + nb dice
+            Keeping the lowest dice : L + nb dice"}
             }
           }
         }
