@@ -8,10 +8,9 @@
 }
 
 body {
-  padding: 15px;
+  padding: 1px;
   background-color: #232626;
   background: radial-gradient(circle at center, #0b0f0f, #000000);
-  /*background-image: url("https://www.transparenttextures.com/patterns/3px-tile.png");*/
   font-family: "Cinzel', serif"; /*"UnifrakturCook", cursive;*/
   background-size: fill;
   color: #f5f5dc; /*#ddd;*/
@@ -21,18 +20,19 @@ body {
   background-color: #1a1a1a;
 }
 
+/*
 .btn-warning {
   background-color: var(--bs-primary);
   border-color: var(--bs-primary);
   color: #0b0f0f;
-}
+}*/
 
 .btn-primary:hover {
   background-color: #d4b16a;
 }
 
 .square-btn {
-  width: 70px;
+  width: 75px;
   aspect-ratio: 1 / 1;
   background-color: #34495e;
   border: none;

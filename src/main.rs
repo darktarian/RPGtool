@@ -110,26 +110,23 @@ fn App() -> Element {
                         button {
                             class: if *current_view.read() == CurrentView::Dashboard { "active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
                             onclick: move |_| current_view.set(CurrentView::Dashboard),
-                            //span { class: "nav-icon", "📊" }
-                            "Tableau de bord"
+                            "Dice board."
                         }
                         button {
                             class: if *current_view.read() == CurrentView::CthulhuGen { " active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
                             onclick: move |_| current_view.set(CurrentView::CthulhuGen),
-                            //span { class: "nav-icon", "👥" }
-                            "Cthulhu Generator"
+                            "Cthulhu Hack Generator"
                         }
                         button {
                             class: if *current_view.read() == CurrentView::Page2 { " active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
                             onclick: move |_| current_view.set(CurrentView::Page2),
-                            //span { class: "nav-icon", "📈" }
-                            "Page2"
+                            "W.I.P"
                         }
                     }//fin autour des boutons
                 }//fin menu
 
                 //contenu
-                div { class: "content-body; col-10 p-4",
+                div { class: "content-body; col-10 p-3",
                     {render_current_view(current_view.read().clone())}
                 }
             }//fin row
