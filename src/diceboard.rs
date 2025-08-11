@@ -79,7 +79,7 @@ pub(crate) fn DiceBoard() -> Element {
         }
         div {  class:"row mb-4 pb-1 border-bottom border-warning-subtle", div { class:"col", div {class:"text-warning",  "Dés custom " } }}
         div { class:"row mb-2 mt-2",
-            div { class:"col",
+            div { class:"col-5",
                 input { class:"mr-2 form-control form-control-sm",
                     type:"text",
                     id:"custom_dice",
@@ -90,25 +90,45 @@ pub(crate) fn DiceBoard() -> Element {
 
             }
             //dés custom
-            div { class:"col", div { class:"btn btn-warning", id:"custom_dice_val", onclick: move |_event|{
-                let dice_txt = sig_custom_dice.read();
+            div { class:"col-1",
+                    div { class:"btn btn-sm btn-warning", id:"custom_dice_val", onclick: move |_event|{
+                    let dice_txt = sig_custom_dice.read();
 
-                let (all, total) = match dice_txt.parse::<Dice>(){
-                    Ok(d) => (vec_u16_to_string(d.all_rolls()),d.total().to_string()),
-                    Err(_) => {
-                         let roll = dice_txt.parse::<RollSet>().ok();
+                    let (all, total) = match dice_txt.parse::<Dice>(){
+                        Ok(d) => (vec_u16_to_string(d.all_rolls()),d.total().to_string()),
+                        Err(_) => {
+                            let roll = dice_txt.parse::<RollSet>().ok();
 
-                        if let Some(rolled) = roll {
-                            ("".to_string(), format!("{}", rolled))
-                        }  else {
-                            ("Error : Format non pris en charge.".to_string(), "".to_string())
+                            if let Some(rolled) = roll {
+                                ("".to_string(), format!("{}", rolled))
+                            }  else {
+                                ("Error : Format non pris en charge.".to_string(), "".to_string())
+                            }
                         }
-                    }
-                };
+                    };
 
-                sig_all_dice.set(all);
-                sig_result.set(total);
-            }, "Roll" } }
+                    sig_all_dice.set(all);
+                    sig_result.set(total);
+                }, "Roll" }
+            }
+            div { class:"col-1",
+                button {class: "btn btn-sm btn-outline-success",
+                    type:"button",
+                    onclick: move |_| {
+                            sig_custom_dice.set(String::new());
+                    },
+                "⭐"
+            }
+        }
+            div { class:"col-1",
+                                button {class: "btn btn-sm btn-outline-danger",
+                    type:"button",
+                    onclick: move |_| {
+                            sig_custom_dice.set(String::new());
+                    },
+                "❌"
+            }
+        }
         }
         div {class:"text-warning border-bottom border-warning-subtle",  "Dices total value: " }
         //zone des résultats.

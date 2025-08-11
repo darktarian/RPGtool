@@ -106,7 +106,7 @@ impl Display for Character {
         writeln!(f, "Dégâts (non armé) : {}", self.degat_unarmed)?;
         writeln!(f, "Dégâts (armé) : {}", self.degat_armed)?;
 
-        // un peu de mise en forme .... 
+        // un peu de mise en forme ....
         writeln!(f, "Capacités :")?;
         for (key, value) in &self.capacite {
             writeln!(f, "  - {}: {}", key, value)?;

@@ -1,15 +1,12 @@
-use std::{
-    collections::{HashSet},
-    rc::Rc,
-};
+use std::{collections::HashSet, rc::Rc};
 
-use dioxus::{logger::tracing::info, prelude::*};
-use rand::{Rng, SeedableRng};
-use rusqlite::Connection;
 use crate::{
     gen_struct::cthulhu_struct::{Archetype, AtoutGenerique, Caracterisques},
     AppContext,
 };
+use dioxus::{logger::tracing::info, prelude::*};
+use rand::{Rng, SeedableRng};
+use rusqlite::Connection;
 
 ///Genrateur des valeurs de caracteristiques (entre 4 et 18)
 pub(crate) fn get_random_carac() -> i32 {
@@ -99,7 +96,6 @@ pub(crate) fn CthulhuGenAll() -> Element {
         Get_atout {  }
     }
 }
-
 
 ///
 /// Ou l'on genere la partie haute de cthulhu genrator avec les caracteristique.
@@ -257,7 +253,6 @@ pub(crate) fn Get_atout() -> Element {
 
     let mut selected_atout = use_signal(HashSet::<Rc<String>>::new);
 
-
     rsx! {
         div { class: "row mt-3",
             div { class:"col",
@@ -355,6 +350,5 @@ pub(crate) fn Get_atout() -> Element {
 
 #[component]
 pub(crate) fn Get_metier() -> Element {
-
-    rsx!{}
+    rsx! {}
 }
