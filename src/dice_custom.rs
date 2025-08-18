@@ -21,6 +21,6 @@ pub(crate) fn get_custom_dice(dice: &str) -> String {
 
             format!("Dés: {} total {}", desc, t)
         }
-        Err(e) => Error::from(e).to_string()
+        Err(e) => e.to_string()
     }
 }

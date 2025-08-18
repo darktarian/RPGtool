@@ -1,7 +1,7 @@
 use std::{collections::HashSet, rc::Rc};
 
 use crate::{
-    gen_struct::cthulhu_struct::{Archetype, AtoutGenerique, Caracterisques},
+    gen_struct::cthulhu_struct::{Archetype, AtoutGenerique, Caracterisques, Character},
     AppContext,
 };
 use dioxus::{logger::tracing::info, prelude::*};
@@ -53,7 +53,7 @@ fn get_archetype_base(arch: Vec<Archetype>, target: &str) -> String {
 /// TODO : check des atouts avancés ?
 fn get_atout_generique() -> Vec<AtoutGenerique> {
     let ctx = use_context::<AppContext>();
-    let conn: Rc<Connection> = ctx.connect;
+    let conn:Rc<Connection>  = ctx.connect;
     let mut rqst_atout = conn.prepare("select * from atout_generique").unwrap();
 
     rqst_atout
@@ -121,9 +121,11 @@ pub(crate) fn ChackGenerate() -> Element {
                     sig_sag.set(get_random_carac());
                     sig_cha.set(get_random_carac());
 
-                    let mut ctx = use_context::<AppContext>();
-                    info!(" av {}", ctx.cthulhu_char);
-                    ctx.cthulhu_char.carac = Caracterisques{
+                    let ctx: AppContext = use_context();
+                    let mut perso: Signal<Character> = ctx.cthulhu_char;
+                    info!(" av {}", perso);
+                    
+                    let carac = Caracterisques{
                         fo:sig_fo(),
                         con:sig_co(),
                         dex:sig_dex(),
@@ -137,7 +139,8 @@ pub(crate) fn ChackGenerate() -> Element {
                         int_bonus: get_bonus(sig_int()),
                         cha_bonus: get_bonus(sig_cha())
                     };
-                    info!(" ap: {}", ctx.cthulhu_char);
+                   perso.write().carac = carac;
+                    info!(" ap: {}", perso);
 
                 },"Generate Value" }
             }

@@ -38,7 +38,7 @@ enum CurrentView {
 #[derive(Clone, Debug)]
 struct AppContext {
     connect: Rc<Connection>,
-    cthulhu_char: Character,
+    cthulhu_char: Signal<Character>,
 }
 
 fn main() {
@@ -63,20 +63,13 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    use_context_provider(|| AppContext {
-        connect: Rc::new(
-            rusqlite::Connection::open(DB.bundled().absolute_source_path())
-                .expect("Failed to open database"),
-        ),
-        cthulhu_char: Character::default(),
-    });
-
-    /*use_context_provider(|| {
-        Rc::new(
-            rusqlite::Connection::open(DB.bundled().absolute_source_path())
-                .expect("Failed to open database"),
-        )
-    });*/
+    let app = AppContext {
+            connect: Rc::new(rusqlite::Connection::open(DB.bundled().absolute_source_path()).expect("Failed to open database")),
+        
+            //sans doute need Rc pour le rendre modifiable ou passer par un signal ce qui me semble mieux.
+            cthulhu_char: Signal::new(Character::default()),
+    };
+    use_context_provider(|| app );
 
     use_context_provider(|| Rc::new(Character::default()));
 

@@ -1,12 +1,11 @@
-use dioxus::logger::tracing::info;
 use dioxus::prelude::*;
-use ndm::{Dice, DiceParseError, RollSet};
+use ndm::{Dice, DiceParseError};
 
 use crate::dice_custom::get_custom_dice;
 
 fn get_a_dice(dice: &str) -> String {
     match dice.parse::<Dice>() {
-        Ok(de) => format!("{} => {}", dice, de.total().to_string()),
+        Ok(de) => format!("{} => {}", dice, de.total()),
         Err(_) => DiceParseError::Unparseable.to_string(),
     }
 }
@@ -15,7 +14,7 @@ fn get_a_dice(dice: &str) -> String {
 pub(crate) fn DiceBoard() -> Element {
     let mut sig_result = use_signal(String::new);
     let mut sig_custom_dice = use_signal(String::new);
-    let mut sig_all_dice = use_signal(String::new);
+    let _sig_all_dice = use_signal(String::new);
 
     rsx! {
         div {  class:"pb-1 border-bottom border-warning-subtle",
