@@ -2,8 +2,34 @@ use std::{
     collections::HashMap,
     fmt::{self, Display, Formatter},
 };
-
+use rand::{Rng, SeedableRng};
 use serde::{Deserialize, Serialize};
+
+
+pub(crate) fn random_distribution(objects: usize, total: i32, min: i32, max: i32) -> Option<Vec<i32>> {
+    if total < min * objects as i32 || total > max * objects as i32 {
+        return None; // impossible de distribuer
+    }
+
+    let val = getrandom::u64().unwrap();
+    let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
+
+    let mut result = vec![min; objects];
+    let mut remaining = total - (min * objects as i32);
+
+    // On distribue les points restants un par un
+    while remaining > 0 {
+        let i = rng.random_range(0..objects);
+        if result[i] < max {
+            result[i] += 1;
+            remaining -= 1;
+        }
+    }
+
+    Some(result)
+}
+
+
 
 
 pub(crate) enum HackDice{
@@ -13,6 +39,30 @@ pub(crate) enum HackDice{
     D8,
     D10,
     D12
+}
+
+impl HackDice {
+    pub(crate) fn get_dice_level(self) -> i32 {
+        match self {
+            HackDice::D1 => 1,
+            HackDice::D4 => 2,
+            HackDice::D6 => 3,
+            HackDice::D8 => 4,
+            HackDice::D10 => 5,
+            HackDice::D12 => 6,
+        }
+    }
+    pub(crate) fn from_level(value: i32) -> HackDice{
+        match value {
+            1 => HackDice::D1,
+            2 => HackDice::D4,
+            3 => HackDice::D6,
+            4 => HackDice::D8,
+            5 => HackDice::D10,
+            6 => HackDice::D12,
+            _ => HackDice::D1, // valeur par défaut (au choix)
+        }
+    }
 }
 
 // Implémentation de Display
@@ -44,10 +94,6 @@ impl From<i32> for HackDice {
         }
     }
 }
-
-
-
-
 
 #[derive(Debug, Deserialize, Serialize, Default, Clone)]
 pub(crate) struct Caracterisques {

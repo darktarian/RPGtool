@@ -1,7 +1,7 @@
 use std::{collections::{HashMap, HashSet}, rc::Rc};
 
 use crate::{
-    gen_struct::cthulhu_struct::{Archetype, AtoutGenerique, Caracterisques, Character, HackDice},
+    gen_struct::cthulhu_struct::{random_distribution, Archetype, AtoutGenerique, Caracterisques, Character, HackDice},
     AppContext,
 };
 use dioxus::{logger::tracing::info, prelude::*};
@@ -16,17 +16,17 @@ pub(crate) fn get_random_carac() -> i32 {
 }
 
 pub(crate) fn set_ressources(mut perso: Character) -> Character  {
-    let val = getrandom::u64().unwrap();
-    let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
-    let pool = 10;
-    
-    perso.bagou = HackDice::from(rng.random_range(1..6)).to_string();
-    perso.torche = HackDice::from(rng.random_range(1..6)).to_string();
-    perso.richesse = HackDice::from(rng.random_range(1..6)).to_string();
-    perso.de_sm =HackDice::from(rng.random_range(1..6)).to_string();
-    perso.de_vie = HackDice::from(rng.random_range(1..6)).to_string();
+    let distrib = random_distribution(4,10,2,6);
+    info!("{:?}", distrib);
 
-
+    if let Some(distribution) = distrib{
+        perso.bagou = HackDice::from_level(distribution[0]).to_string();
+        perso.torche = HackDice::from_level(distribution[1]).to_string();
+        perso.de_sm =HackDice::from_level(distribution[2]).to_string();
+        perso.de_vie = HackDice::from_level(distribution[3]).to_string();
+        perso.degat_armed = HackDice::from_level(distribution[4]+1).to_string();
+        perso.degat_unarmed = HackDice::from_level(distribution[5]+1).to_string();
+    }
     perso
 }
 
@@ -355,7 +355,7 @@ pub(crate) fn Get_atout() -> Element {
             div { class:"col",
                 button { class:"btn btn-warning", 
                 onclick: move |_ |{
-                    let ctx: AppContext = use_context();
+                    let mut ctx: AppContext = use_context();
                     let mut perso: Signal<Character> = ctx.cthulhu_char;
                     let mut capacite: HashMap<String, String> = HashMap::new();
                     for cap in selected_atout().iter().cloned(){
@@ -363,6 +363,8 @@ pub(crate) fn Get_atout() -> Element {
                     }
                     
                     perso.write().capacite = capacite;
+                    let perso2 = set_ressources(perso());
+                    ctx.cthulhu_char.set(perso2);
                     info!(" le perso ----> {}", perso());
 
 
