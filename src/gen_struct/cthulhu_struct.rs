@@ -5,19 +5,19 @@ use std::{
 use rand::{Rng, SeedableRng};
 use serde::{Deserialize, Serialize};
 
-
-pub(crate) fn random_distribution(objects: usize, total: i32, min: i32, max: i32) -> Option<Vec<i32>> {
-    if total < min * objects as i32 || total > max * objects as i32 {
-        return None; // impossible de distribuer
-    }
+/// Permet de distribuer 10pt pour les ressources
+/// on part d'une base fixe qui intègre que les deux derniers (degâts armé et non armés comme à la valeurs de 1).
+/// je fixe bagout, dés de vie, san  et torche avec un min de 1 ou 2 et je ne distribue que 4pt au lieu de 10.
+pub(crate) fn random_distribution(objects: usize, points: i32, max: i32) -> Option<Vec<i32>> {
+    let base = vec![2, 2, 1, 1, 1, 1];
 
     let val = getrandom::u64().unwrap();
     let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
 
-    let mut result = vec![min; objects];
-    let mut remaining = total - (min * objects as i32);
+    let mut result = base.clone();
+    let mut remaining = points;
 
-    // On distribue les points restants un par un
+    // Distribuer aléatoirement les points restants
     while remaining > 0 {
         let i = rng.random_range(0..objects);
         if result[i] < max {

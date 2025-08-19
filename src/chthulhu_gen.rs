@@ -16,7 +16,7 @@ pub(crate) fn get_random_carac() -> i32 {
 }
 
 pub(crate) fn set_ressources(mut perso: Character) -> Character  {
-    let distrib = random_distribution(4,10,2,6);
+    let distrib = random_distribution(5,4,6);
     info!("{:?}", distrib);
 
     if let Some(distribution) = distrib{
@@ -29,8 +29,6 @@ pub(crate) fn set_ressources(mut perso: Character) -> Character  {
     }
     perso
 }
-
-
 
 ///
 /// Petite fonction pour attribuer les bonus au caracteristiques.
@@ -120,6 +118,15 @@ pub(crate) fn ChackGenerate() -> Element {
     let mut sig_sag = use_signal(|| 0);
     let mut sig_cha = use_signal(|| 0);
 
+    let mut sig_bagout = use_signal(String::new);
+    let mut sig_torche = use_signal(String::new);
+    let mut sig_san = use_signal(String::new);
+    let mut sig_dv = use_signal(String::new);
+    let mut sig_arme = use_signal(String::new);
+    let mut sig_unarmed = use_signal(String::new);
+
+
+
     rsx! {
         div {  class:"row mb-2 align-items-start",
             div {  class:"col",
@@ -132,10 +139,22 @@ pub(crate) fn ChackGenerate() -> Element {
                     sig_sag.set(get_random_carac());
                     sig_cha.set(get_random_carac());
 
-                    let ctx: AppContext = use_context();
+                    let mut ctx: AppContext = use_context();
                     let mut perso: Signal<Character> = ctx.cthulhu_char;
                     info!(" av {}", perso);
+                    let perso2 = set_ressources(perso());
+
+                    sig_bagout.set(perso2.bagou.clone());
+                    sig_torche.set(perso2.torche.clone());
+                    sig_san.set(perso2.de_vie.clone());
+                    sig_dv.set(perso2.de_sm.clone());
+                    sig_arme.set(perso2.degat_armed.clone());
+                    sig_unarmed.set(perso2.degat_unarmed.clone());
+
+                    ctx.cthulhu_char.set(perso2);
                     
+                    
+
                     let carac = Caracterisques{
                         fo:sig_fo(),
                         con:sig_co(),
@@ -205,18 +224,18 @@ pub(crate) fn ChackGenerate() -> Element {
             div { class: "col-3", id: "colAutre",
                     div { class: "col", id:"col2",
                         div {  class:"btn btn-warning",style:"width:80px", id:"btn4", "Bagout" }
-                        div {  class:"btn btn-outline-warning m-1", id:"btn5", "E" }
+                        div {  class:"btn btn-outline-warning m-1", id:"btn5", if sig_bagout().is_empty() {" "}else{ {sig_bagout} }}
                     }
                     div{
                         div { class: "col", id:"col3",
                             div { class:"btn btn-warning",style:"width:80px", id:"btn5", "Torche" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_torche}  }
                         }
                     }
                     div{
                         div { class: "col", id:"col4",
                             div { class:"btn btn-warning",style:"width:80px", id:"btn6", "SAN" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_san} }
                         }
                     }
                     div{
@@ -230,13 +249,25 @@ pub(crate) fn ChackGenerate() -> Element {
                     div{ class:"row",
                         div { class: "col", id:"col5",
                             div { class:"btn btn-warning", style:"width:70px", id:"btn8", "DV" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_dv} }
                         }
                     }
                     div{ class:"row",
                         div { class: "col", id:"col5",
                             div { class:"btn btn-warning",style:"width:70px", id:"btn9", "PdV" }
                             div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
+                        }
+                    }
+                    div{ class:"row",
+                        div { class: "col", id:"col5",
+                            div { class:"btn btn-warning", style:"width:70px", id:"btn10", "Armé" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_arme} }
+                        }
+                    }
+                    div{ class:"row",
+                        div { class: "col", id:"col5",
+                            div { class:"btn btn-warning",style:"width:70px", id:"btn11", "Non Armé" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_unarmed} }
                         }
                     }
           }
@@ -363,8 +394,8 @@ pub(crate) fn Get_atout() -> Element {
                     }
                     
                     perso.write().capacite = capacite;
-                    let perso2 = set_ressources(perso());
-                    ctx.cthulhu_char.set(perso2);
+                    //let perso2 = set_ressources(perso());
+                    //ctx.cthulhu_char.set(perso2);
                     info!(" le perso ----> {}", perso());
 
 
