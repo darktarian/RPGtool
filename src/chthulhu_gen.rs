@@ -1,4 +1,4 @@
-use std::{collections::HashSet, rc::Rc};
+use std::{collections::{HashMap, HashSet}, rc::Rc};
 
 use crate::{
     gen_struct::cthulhu_struct::{Archetype, AtoutGenerique, Caracterisques, Character},
@@ -110,7 +110,7 @@ pub(crate) fn ChackGenerate() -> Element {
     let mut sig_cha = use_signal(|| 0);
 
     rsx! {
-        div {  class:"row mb-2",
+        div {  class:"row mb-2 align-items-start",
             div {  class:"col",
                 button { type:"button", class:"btn btn-md btn-outline-light m-1", id:"btnGen", onclick:
                     move |_| {info!("on génére click");
@@ -147,7 +147,7 @@ pub(crate) fn ChackGenerate() -> Element {
             div {  class:"col"}
         }
         div { class:"row",
-            div { class: "col", id:"colCarac",
+            div { class: "col-5", id:"colCarac",
                 div { class:"col",
                     div { class: "row mb-1",
                          div { class: "col-4", div { class:"btn btn-warning w-100", id:"btn1", "FOR" }}
@@ -190,43 +190,47 @@ pub(crate) fn ChackGenerate() -> Element {
                         div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_cha.read() !=0 { {get_bonus(*sig_cha.read())} }else{ "0" } }}
                     }
                 }
-
             }
-            div { class: "col", id: "colAutre",
-                div { class:"row",
+            div { class: "col-4", id: "colAutre",
+
                     div { class: "col", id:"col2",
-                        div {  class:"btn btn-warning w-25", id:"btn4", "Bagout" }
+                        div {  class:"btn btn-warning",style:"width:70px", id:"btn4", "Bagout" }
                         div {  class:"btn btn-outline-warning m-1", id:"btn5", "E" }
-                        div {  class:"btn btn-outline-warning m-1", id:"btn6", "F" }
                     }
                     div{
                         div { class: "col", id:"col3",
-                            div { class:"btn btn-warning w-25", id:"btn7", "Torche" }
+                            div { class:"btn btn-warning",style:"width:70px", id:"btn5", "Torche" }
                             div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn9", "I" }
                         }
                     }
                     div{
                         div { class: "col", id:"col4",
-                            div { class:"btn btn-warning w-25", id:"btn7", "SAN" }
+                            div { class:"btn btn-warning",style:"width:70px", id:"btn6", "SAN" }
                             div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn9", "I" }
                         }
                     }
                     div{
                         div { class: "col", id:"col5",
-                            div { class:"btn btn-warning w-25", id:"btn7", "Richesse" }
+                            div { class:"btn btn-warning", style:"width:70px", id:"btn7", "Richesse" }
                             div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn9", "I" }
                         }
                     }
-                }
-
-                div {  class:"row",
-
-                }
 
             }
+            div { class:"col",
+                    div{ class:"row",
+                        div { class: "col", id:"col5",
+                            div { class:"btn btn-warning", style:"width:70px", id:"btn8", "DV" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
+                        }
+                    }
+                    div{ class:"row",
+                        div { class: "col", id:"col5",
+                            div { class:"btn btn-warning",style:"width:70px", id:"btn9", "PdV" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
+                        }
+                    }
+          }
         }
     }
 }
@@ -240,8 +244,6 @@ pub(crate) fn Get_atout() -> Element {
         println!("result base : {arch:?}");
     }
 
-    //println!("{name_vec:?}");
-
     let atouts_gen = get_atout_generique();
     let mut atout_names = Vec::new();
 
@@ -251,9 +253,7 @@ pub(crate) fn Get_atout() -> Element {
 
     let mut sig_name = use_signal(String::new);
     let txt_base = get_archetype_base(archetypes, &sig_name.read());
-
     let mut sig_atout_name = use_signal(String::new);
-
     let mut selected_atout = use_signal(HashSet::<Rc<String>>::new);
 
     rsx! {
@@ -262,7 +262,7 @@ pub(crate) fn Get_atout() -> Element {
                 div {  class:"row",
                     div {  class:"col-5",
                         ///////
-                        label { "Choisissez votre atout : " }
+                        label { "Choisissez vos 2 atouts : " }
                         br {  }
                         select {
                                 class: "btn",
@@ -272,7 +272,8 @@ pub(crate) fn Get_atout() -> Element {
                                     let mut sc = selected_atout();
                                     info!("{sig_atout_name}");
                                     //on limite à 4 le nombre d'atout à choisir
-                                    if sc.len()<4{
+                                    //todo -> utiliser un signal pour décompter.
+                                    if sc.len()<3{
                                         sc.insert(sig_atout_name().into());
                                         selected_atout.set(sc);
                                     }
@@ -289,16 +290,16 @@ pub(crate) fn Get_atout() -> Element {
                                 div {
                                     for select in selected_atout().iter().cloned(){
                                             "{select} "
-                                        button {class: "btn btn-sm btn-close btn-danger",
-                                                type:"button",
-                                                onclick: move |_| {
-                                                    let mut sc = selected_atout();
-                                                    sc.remove(&select);
-                                                    selected_atout.set(sc);
-                                                },
-                                            //"🗑"
+                                        p{ display:"inline",
+                                            button {class: "btn btn-sm btn-close btn-danger",
+                                                    type:"button",
+                                                    onclick: move |_| {
+                                                        let mut sc = selected_atout();
+                                                        sc.remove(&select);
+                                                        selected_atout.set(sc);
+                                                    },
+                                            }
                                         }
-                                        br {  }
                                     }
                                 }
                             }//end des atouts selectionnés
@@ -324,7 +325,6 @@ pub(crate) fn Get_atout() -> Element {
                                             option { value: "{name}", "{name}" }
                                         }
                                 }
-
                             }
                         }
                         div { class:"row",
@@ -336,7 +336,6 @@ pub(crate) fn Get_atout() -> Element {
                                 }
                             }
                         }
-
                     }
                 }
 
@@ -345,7 +344,22 @@ pub(crate) fn Get_atout() -> Element {
         }
         div { class:"row mt-5",
             div { class:"col",
-                button { class:"btn btn-warning", "Generer PDF" }
+                button { class:"btn btn-warning", 
+                onclick: move |_ |{
+                    let ctx: AppContext = use_context();
+                    let mut perso: Signal<Character> = ctx.cthulhu_char;
+                    let mut capacite: HashMap<String, String> = HashMap::new();
+                    for cap in selected_atout().iter().cloned(){
+                        capacite.insert(cap.to_string(), "test".to_string());
+                    }
+                    
+                    perso.write().capacite = capacite;
+                    info!(" le perso ----> {}", perso());
+
+
+
+
+                } ,"Generer PDF" }
             }
         }
     }

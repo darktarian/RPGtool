@@ -54,7 +54,7 @@ fn main() {
                 .with_resizable(true)
                 .with_title("Generator")
                 .with_closable(true)
-                .with_inner_size(LogicalSize::new(800.0, 600.0)),
+                .with_inner_size(LogicalSize::new(1024.0, 768.0)),
         )
         .with_menu(create_menu())
         .with_close_behaviour(WindowCloseBehaviour::LastWindowExitsApp);
