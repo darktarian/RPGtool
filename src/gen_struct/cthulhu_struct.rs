@@ -5,6 +5,50 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
+
+pub(crate) enum HackDice{
+    D1,
+    D4,
+    D6,
+    D8,
+    D10,
+    D12
+}
+
+// Implémentation de Display
+impl fmt::Display for HackDice {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            HackDice::D1 => "1",
+            HackDice::D4 => "D4",
+            HackDice::D6 => "D6",
+            HackDice::D8 => "D8",
+            HackDice::D10 => "D10",
+            HackDice::D12 => "D12",
+        };
+        write!(f, "{}", s)
+    }
+}
+
+// Implémentation de From<i32>
+impl From<i32> for HackDice {
+    fn from(value: i32) -> Self {
+        match value {
+            1 => HackDice::D1,
+            4 => HackDice::D4,
+            6 => HackDice::D6,
+            8 => HackDice::D8,
+            10 => HackDice::D10,
+            12 => HackDice::D12,
+            _ => HackDice::D6, // valeur par défaut (au choix)
+        }
+    }
+}
+
+
+
+
+
 #[derive(Debug, Deserialize, Serialize, Default, Clone)]
 pub(crate) struct Caracterisques {
     pub(crate) fo: i32,

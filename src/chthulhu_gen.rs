@@ -1,7 +1,7 @@
 use std::{collections::{HashMap, HashSet}, rc::Rc};
 
 use crate::{
-    gen_struct::cthulhu_struct::{Archetype, AtoutGenerique, Caracterisques, Character},
+    gen_struct::cthulhu_struct::{Archetype, AtoutGenerique, Caracterisques, Character, HackDice},
     AppContext,
 };
 use dioxus::{logger::tracing::info, prelude::*};
@@ -15,11 +15,22 @@ pub(crate) fn get_random_carac() -> i32 {
     rng.random_range(4..18)
 }
 
-/*pub(crate) fn get_a_dice(max: u32) -> u32 {
+pub(crate) fn set_ressources(mut perso: Character) -> Character  {
     let val = getrandom::u64().unwrap();
     let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
-    rng.random_range(1..max)
-}*/
+    let pool = 10;
+    
+    perso.bagou = HackDice::from(rng.random_range(1..6)).to_string();
+    perso.torche = HackDice::from(rng.random_range(1..6)).to_string();
+    perso.richesse = HackDice::from(rng.random_range(1..6)).to_string();
+    perso.de_sm =HackDice::from(rng.random_range(1..6)).to_string();
+    perso.de_vie = HackDice::from(rng.random_range(1..6)).to_string();
+
+
+    perso
+}
+
+
 
 ///
 /// Petite fonction pour attribuer les bonus au caracteristiques.
@@ -147,77 +158,75 @@ pub(crate) fn ChackGenerate() -> Element {
             div {  class:"col"}
         }
         div { class:"row",
-            div { class: "col-5", id:"colCarac",
+            div { class: "col-4", id:"colCarac",
                 div { class:"col",
                     div { class: "row mb-1",
-                         div { class: "col-4", div { class:"btn btn-warning w-100", id:"btn1", "FOR" }}
-                        div { class: "col-3", div {class:"btn btn-outline-warning w-100", id:"Fo","{sig_fo}" }}
-                        div { class: "col-3",div { class:"btn btn-warning w-100", id:"btn11",  if *sig_fo.read() !=0 { {get_bonus(*sig_fo.read())} }else{ "0" } } }
+                         div { class: "col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn1", "FOR" }}
+                        div { class: "col-2", div {class:"btn btn-outline-warning", style:"width:45px", id:"Fo","{sig_fo}" }}
+                        div { class: "col-2",div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_fo.read() !=0 { {get_bonus(*sig_fo.read())} }else{ "0" } } }
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "CONS" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"Co", "{sig_co}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_co.read() !=0 { {get_bonus(*sig_co.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "CONS" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"Co", "{sig_co}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_co.read() !=0 { {get_bonus(*sig_co.read())} }else{ "0" } }}
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "DEX" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"dex", "{sig_dex}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_dex.read() !=0 { {get_bonus(*sig_dex.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "DEX" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"dex", "{sig_dex}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_dex.read() !=0 { {get_bonus(*sig_dex.read())} }else{ "0" } }}
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "INT" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"int", "{sig_int}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_int.read() !=0 { {get_bonus(*sig_int.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "INT" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"int", "{sig_int}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_int.read() !=0 { {get_bonus(*sig_int.read())} }else{ "0" } }}
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "SAG" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"sag", "{sig_sag}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_sag.read() !=0 { {get_bonus(*sig_sag.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "SAG" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"sag", "{sig_sag}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_sag.read() !=0 { {get_bonus(*sig_sag.read())} }else{ "0" } }}
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "CHA" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"cha", "{sig_cha}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_cha.read() !=0 { {get_bonus(*sig_cha.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "CHA" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"cha", "{sig_cha}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_cha.read() !=0 { {get_bonus(*sig_cha.read())} }else{ "0" } }}
                     }
                 }
             }
-            div { class: "col-4", id: "colAutre",
-
+            div { class: "col-3", id: "colAutre",
                     div { class: "col", id:"col2",
-                        div {  class:"btn btn-warning",style:"width:70px", id:"btn4", "Bagout" }
+                        div {  class:"btn btn-warning",style:"width:80px", id:"btn4", "Bagout" }
                         div {  class:"btn btn-outline-warning m-1", id:"btn5", "E" }
                     }
                     div{
                         div { class: "col", id:"col3",
-                            div { class:"btn btn-warning",style:"width:70px", id:"btn5", "Torche" }
+                            div { class:"btn btn-warning",style:"width:80px", id:"btn5", "Torche" }
                             div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
                         }
                     }
                     div{
                         div { class: "col", id:"col4",
-                            div { class:"btn btn-warning",style:"width:70px", id:"btn6", "SAN" }
+                            div { class:"btn btn-warning",style:"width:80px", id:"btn6", "SAN" }
                             div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
                         }
                     }
                     div{
                         div { class: "col", id:"col5",
-                            div { class:"btn btn-warning", style:"width:70px", id:"btn7", "Richesse" }
+                            div { class:"btn btn-warning", style:"width:80px", id:"btn7", "Richesse" }
                             div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
                         }
                     }
-
             }
-            div { class:"col",
+            div { class:"col-3", id:"dvie",
                     div{ class:"row",
                         div { class: "col", id:"col5",
                             div { class:"btn btn-warning", style:"width:70px", id:"btn8", "DV" }
