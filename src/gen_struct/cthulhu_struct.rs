@@ -180,6 +180,14 @@ pub(crate) struct Character {
     pub(crate) metier: Metier,
 }
 
+impl Character {
+    pub(crate) fn generate_pj(self) -> Self{
+
+
+        self
+    }
+}
+
 impl Display for Character {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         writeln!(f, "Nom : {}", self.name)?;
