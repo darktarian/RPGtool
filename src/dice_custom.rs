@@ -1,15 +1,11 @@
 
+
 use tyche::{
-    parse::Error,
-    dice::{
-        modifier::{Condition, Modifier},
-        Roller,
-    }, Dice, Expr
+Expr
 };
 
 use tyche::dice::roller::FastRand as FastRandRoller;
 
-use crate::dice_custom;
 
 pub(crate) fn get_custom_dice(dice: &str) -> String {
     let mut roller = FastRandRoller::default();
