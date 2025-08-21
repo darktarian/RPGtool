@@ -1,8 +1,8 @@
 use std::{collections::{HashMap, HashSet}, rc::Rc};
 
 use crate::{
-    gen_struct::{cthulhu_struct::{Caracterisques, Character}, 
-    rpg_utils::{get_archetype, get_archetype_base, get_atout_generique, get_bonus, get_random_carac, set_ressources}},
+    gen_struct::{cthulhu_struct::{Character}, 
+    rpg_utils::{get_archetype, get_archetype_base, get_atout_generique, get_bonus}},
     AppContext,
 };
 use dioxus::{logger::tracing::info, prelude::*};
@@ -42,45 +42,24 @@ pub(crate) fn ChackGenerate() -> Element {
             div {  class:"col",
                 button { type:"button", class:"btn btn-md btn-outline-light m-1", id:"btnGen", onclick:
                     move |_| {info!("on génére click");
-                    sig_fo.set(get_random_carac());
-                    sig_dex.set(get_random_carac());
-                    sig_co.set(get_random_carac());
-                    sig_int.set(get_random_carac());
-                    sig_sag.set(get_random_carac());
-                    sig_cha.set(get_random_carac());
-
                     let mut ctx: AppContext = use_context();
-                    let mut perso: Signal<Character> = ctx.cthulhu_char;
-                    info!(" av {}", perso);
-                    let perso2 = set_ressources(perso());
-
-                    sig_bagout.set(perso2.bagou.clone());
-                    sig_torche.set(perso2.torche.clone());
-                    sig_san.set(perso2.de_vie.clone());
-                    sig_dv.set(perso2.de_sm.clone());
-                    sig_arme.set(perso2.degat_armed.clone());
-                    sig_unarmed.set(perso2.degat_unarmed.clone());
-
-                    ctx.cthulhu_char.set(perso2);
+                    let generated_pj = Character::generate_pj();
+                    info!("TEST -----> {generated_pj}");
                     
-                    
+                    sig_fo.set(generated_pj.carac.fo);
+                    sig_dex.set(generated_pj.carac.dex);
+                    sig_co.set(generated_pj.carac.con);
+                    sig_int.set(generated_pj.carac.int);
+                    sig_sag.set(generated_pj.carac.sag);
+                    sig_cha.set(generated_pj.carac.cha);
+                    sig_bagout.set(generated_pj.bagou.clone());
+                    sig_torche.set(generated_pj.torche.clone());
+                    sig_san.set(generated_pj.de_sm.clone());
+                    sig_dv.set(generated_pj.de_vie.clone());
+                    sig_arme.set(generated_pj.degat_armed.clone());
+                    sig_unarmed.set(generated_pj.degat_unarmed.clone());
 
-                    let carac = Caracterisques{
-                        fo:sig_fo(),
-                        con:sig_co(),
-                        dex:sig_dex(),
-                        sag:sig_sag(),
-                        int:sig_int(),
-                        cha:sig_cha(),
-                        fo_bonus:get_bonus(sig_fo()),
-                        co_bonus: get_bonus(sig_co()),
-                        dex_bonus: get_bonus(sig_dex()),
-                        sage_bonus: get_bonus(sig_sag()),
-                        int_bonus: get_bonus(sig_int()),
-                        cha_bonus: get_bonus(sig_cha())
-                    };
-                   perso.write().carac = carac;
-                    info!(" ap: {}", perso);
+                    ctx.cthulhu_char.set(generated_pj);
 
                 },"Generate Value" }
             }
@@ -194,7 +173,7 @@ pub(crate) fn Get_atout() -> Element {
         println!("result base : {arch:?}");
     }
 
-    let atouts_gen = get_atout_generique();
+    let atouts_gen = get_atout_generique(None);
     let mut atout_names = Vec::new();
 
     for atout in atouts_gen {

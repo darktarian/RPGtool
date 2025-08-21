@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{collections::HashSet, rc::Rc};
 
 use crate::{
     gen_struct::cthulhu_struct::{random_distribution, Archetype, AtoutGenerique, Character, HackDice},
@@ -61,12 +61,13 @@ pub(crate) fn get_archetype_base(arch: Vec<Archetype>, target: &str) -> String {
 
 /// Requet vers la base sqlite pour obtenir les atout
 /// TODO : check des atouts avancés ?
-pub(crate) fn get_atout_generique() -> Vec<AtoutGenerique> {
+/// TODO -> passeg d'argument du nombre d'atout à renvoyer de maniere random.
+pub(crate) fn get_atout_generique(nb : Option<u8>) -> Vec<AtoutGenerique> {
     let ctx = use_context::<AppContext>();
     let conn:Rc<Connection>  = ctx.connect;
     let mut rqst_atout = conn.prepare("select * from atout_generique").unwrap();
 
-    rqst_atout
+    let atouts = rqst_atout
         .query_map([], |r| {
             Ok(AtoutGenerique {
                 index: r.get(0)?,
@@ -76,7 +77,36 @@ pub(crate) fn get_atout_generique() -> Vec<AtoutGenerique> {
         })
         .unwrap()
         .collect::<Result<Vec<_>, _>>()
-        .unwrap()
+        .unwrap();
+
+        match nb {
+            Some(nb) => {
+                let mut indexes = HashSet::new();
+                let mut selected = Vec::new();
+                let val = getrandom::u64().unwrap();
+                let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
+
+                // on essaie de ne pas prendre deux fois le meme atout
+                while indexes.len() <nb.into(){
+                    let index = rng.random_range(0..atouts.len());
+                       if !indexes.contains(&index){
+                        indexes.insert(index);
+                    }
+                }
+
+                //on prend les atouts
+                for index in indexes{
+                    if let Some(atout) = atouts.get(index){
+                        selected.push(atout.clone());
+                    }
+                } 
+
+
+                selected
+            },
+            None => atouts,
+        }
+
 }
 
 ///Requete vers la base sqlite pour obtenir les données d'archetypes.
