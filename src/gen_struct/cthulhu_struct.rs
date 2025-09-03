@@ -1,12 +1,14 @@
+use printpdf::TextItem;
+use rand::{Rng, SeedableRng};
+use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
     fmt::{self, Display, Formatter},
 };
-use printpdf::TextItem;
-use rand::{Rng, SeedableRng};
-use serde::{Deserialize, Serialize};
 
-use crate::gen_struct::rpg_utils::{get_atout_generique, get_bonus, get_random_carac, set_ressources};
+use crate::gen_struct::rpg_utils::{
+    get_atout_generique, get_bonus, get_random_carac, set_ressources,
+};
 
 /// Permet de distribuer 10pt pour les ressources
 /// on part d'une base fixe qui intègre que les deux derniers (degâts armé et non armés comme à la valeurs de 1).
@@ -32,14 +34,13 @@ pub(crate) fn random_distribution(objects: usize, points: i32, max: i32) -> Opti
     Some(result)
 }
 
-
-pub(crate) enum HackDice{
+pub(crate) enum HackDice {
     D1,
     D4,
     D6,
     D8,
     D10,
-    D12
+    D12,
 }
 
 impl HackDice {
@@ -53,7 +54,7 @@ impl HackDice {
             HackDice::D12 => 6,
         }
     }
-    pub(crate) fn from_level(value: i32) -> HackDice{
+    pub(crate) fn from_level(value: i32) -> HackDice {
         match value {
             1 => HackDice::D1,
             2 => HackDice::D4,
@@ -182,7 +183,7 @@ pub(crate) struct Character {
 }
 
 impl Character {
-    pub(crate) fn generate_pj() -> Character{
+    pub(crate) fn generate_pj() -> Character {
         let mut character = Character {
             carac: Caracterisques {
                 fo: get_random_carac(),
@@ -194,7 +195,7 @@ impl Character {
                 int: get_random_carac(),
                 int_bonus: "".to_string(),
                 sag: get_random_carac(),
-                sage_bonus:"".to_string(),
+                sage_bonus: "".to_string(),
                 cha: get_random_carac(),
                 cha_bonus: "".to_string(),
             },
@@ -212,14 +213,12 @@ impl Character {
         let mut character = set_ressources(character);
         let atouts = get_atout_generique(Some(3));
 
-        for at in atouts{
+        for at in atouts {
             character.capacite.insert(at.name, at.atout_desc);
         }
-        
+
         character
     }
-
-
 }
 
 impl Display for Character {

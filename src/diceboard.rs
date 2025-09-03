@@ -115,8 +115,8 @@ pub(crate) fn DiceBoard() -> Element {
             }
         }
         div { class:"row mt-3", div {class:"col",
-            div{ 
-                button {  
+            div{
+                button {
                     class:"btn-help",
                     type:"button",
                     "data-bs-toggle":"collapse",
@@ -125,7 +125,7 @@ pub(crate) fn DiceBoard() -> Element {
                     "aria-controls":"collapseExample",
                     "click -> Help"
                 }
-                
+
                 div{id:"collapseExample", class:"collapse",
                     div {
                         style: "font-family: monospace; font-size: 0.9rem; line-height: 1.4;",

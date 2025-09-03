@@ -1,8 +1,13 @@
-use std::{collections::{HashMap, HashSet}, rc::Rc};
+use std::{
+    collections::{HashMap, HashSet},
+    rc::Rc,
+};
 
 use crate::{
-    gen_struct::{cthulhu_struct::{Character}, 
-    rpg_utils::{get_archetype, get_archetype_base, get_atout_generique, get_bonus}},
+    gen_struct::{
+        cthulhu_struct::Character,
+        rpg_utils::{get_archetype, get_archetype_base, get_atout_generique, get_bonus},
+    },
     AppContext,
 };
 use dioxus::{logger::tracing::info, prelude::*};
@@ -37,8 +42,6 @@ pub(crate) fn ChackGenerate() -> Element {
     let mut sig_arme = use_signal(String::new);
     let mut sig_unarmed = use_signal(String::new);
 
-
-
     rsx! {
         div {  class:"row mb-2 align-items-start",
             div {  class:"col",
@@ -47,7 +50,7 @@ pub(crate) fn ChackGenerate() -> Element {
                     let mut ctx: AppContext = use_context();
                     let generated_pj = Character::generate_pj();
                     //info!("TEST -----> {generated_pj}");
-                    
+
                     sig_fo.set(generated_pj.carac.fo);
                     sig_dex.set(generated_pj.carac.dex);
                     sig_co.set(generated_pj.carac.con);
@@ -62,7 +65,7 @@ pub(crate) fn ChackGenerate() -> Element {
                     sig_unarmed.set(generated_pj.degat_unarmed.clone());
 
                     ctx.cthulhu_char.set(generated_pj);
-                    
+
 
                 },"Generate Value" }
             }
@@ -194,7 +197,7 @@ pub(crate) fn Get_atout() -> Element {
                 div {  class:"row",
                     div {  class:"col-5",
                         ///////
-                        /* 
+                        /*
                         label { "Choisissez vos 2 atouts : " }
                         br {  }
                         select {
@@ -278,7 +281,7 @@ pub(crate) fn Get_atout() -> Element {
         }
         div { class:"row mt-5",
             div { class:"col",
-                button { class:"btn btn-warning", 
+                button { class:"btn btn-warning",
                 onclick: move |_ |{
                     let ctx: AppContext = use_context();
                     let mut perso: Signal<Character> = ctx.cthulhu_char;

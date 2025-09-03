@@ -1,11 +1,6 @@
-
-
-use tyche::{
-Expr
-};
+use tyche::Expr;
 
 use tyche::dice::roller::FastRand as FastRandRoller;
-
 
 pub(crate) fn get_custom_dice(dice: &str) -> String {
     let mut roller = FastRandRoller::default();
@@ -17,6 +12,6 @@ pub(crate) fn get_custom_dice(dice: &str) -> String {
 
             format!("Dés: {} total {}", desc, t)
         }
-        Err(e) => e.to_string()
+        Err(e) => e.to_string(),
     }
 }

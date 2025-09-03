@@ -19,8 +19,8 @@ mod diceboard;
 mod gen_struct;
 mod nav_bandeau;
 mod page2;
-mod utils;
 mod pdfprinter;
+mod utils;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 const DB: Asset = asset!("/assets/cthulhuhack.db");
@@ -65,12 +65,15 @@ fn main() {
 #[component]
 fn App() -> Element {
     let app = AppContext {
-            connect: Rc::new(rusqlite::Connection::open(DB.bundled().absolute_source_path()).expect("Failed to open database")),
-        
-            //sans doute need Rc pour le rendre modifiable ou passer par un signal ce qui me semble mieux.
-            cthulhu_char: Signal::new(Character::default()),
+        connect: Rc::new(
+            rusqlite::Connection::open(DB.bundled().absolute_source_path())
+                .expect("Failed to open database"),
+        ),
+
+        //sans doute need Rc pour le rendre modifiable ou passer par un signal ce qui me semble mieux.
+        cthulhu_char: Signal::new(Character::default()),
     };
-    use_context_provider(|| app );
+    use_context_provider(|| app);
 
     //use_context_provider(|| Rc::new(Character::default()));
 
