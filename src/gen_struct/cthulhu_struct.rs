@@ -2,6 +2,7 @@ use std::{
     collections::HashMap,
     fmt::{self, Display, Formatter},
 };
+use printpdf::TextItem;
 use rand::{Rng, SeedableRng};
 use serde::{Deserialize, Serialize};
 
@@ -115,7 +116,7 @@ impl Display for Caracterisques {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "FOR: {} ({}), CON: {} ({}), DEX: {} ({}), SAG: {} ({}), INT: {} ({}), CHA: {} ({})",
+            "FOR: {} ({}), CON: {} ({}), DEX: {} ({}), SAG: {} ({}), INT: {} ({}), CHA: {} ({}),",
             self.fo,
             self.fo_bonus,
             self.con,
@@ -217,6 +218,8 @@ impl Character {
         
         character
     }
+
+
 }
 
 impl Display for Character {

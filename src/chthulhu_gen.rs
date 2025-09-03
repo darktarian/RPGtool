@@ -7,6 +7,8 @@ use crate::{
 };
 use dioxus::{logger::tracing::info, prelude::*};
 
+use crate::pdfprinter::pdf::hack_to_pdf;
+
 ///On assemble les parties de la vue ici.
 #[component]
 pub(crate) fn CthulhuGenAll() -> Element {
@@ -44,7 +46,7 @@ pub(crate) fn ChackGenerate() -> Element {
                     move |_| {info!("on génére click");
                     let mut ctx: AppContext = use_context();
                     let generated_pj = Character::generate_pj();
-                    info!("TEST -----> {generated_pj}");
+                    //info!("TEST -----> {generated_pj}");
                     
                     sig_fo.set(generated_pj.carac.fo);
                     sig_dex.set(generated_pj.carac.dex);
@@ -60,6 +62,7 @@ pub(crate) fn ChackGenerate() -> Element {
                     sig_unarmed.set(generated_pj.degat_unarmed.clone());
 
                     ctx.cthulhu_char.set(generated_pj);
+                    
 
                 },"Generate Value" }
             }
@@ -191,6 +194,7 @@ pub(crate) fn Get_atout() -> Element {
                 div {  class:"row",
                     div {  class:"col-5",
                         ///////
+                        /* 
                         label { "Choisissez vos 2 atouts : " }
                         br {  }
                         select {
@@ -234,9 +238,10 @@ pub(crate) fn Get_atout() -> Element {
                             }//end des atouts selectionnés
                         }
                         //
+                        */
                     }
                     div{class:"col-1",
-                        div{class:"badge text-bg-danger fs-6", "OU" }
+                        //div{class:"badge text-bg-danger fs-6", "OU" }
                     }
                     div{class:"col-5",
                         //mettre ici le choix des archétypes.
@@ -277,16 +282,8 @@ pub(crate) fn Get_atout() -> Element {
                 onclick: move |_ |{
                     let ctx: AppContext = use_context();
                     let mut perso: Signal<Character> = ctx.cthulhu_char;
-                    let mut capacite: HashMap<String, String> = HashMap::new();
-                    for cap in selected_atout().iter(){
-                        capacite.insert(cap.to_string(), "test".to_string());
-                    }
-                    
-                    perso.write().capacite = capacite;
-                    //let perso2 = set_ressources(perso());
-                    //ctx.cthulhu_char.set(perso2);
-                    info!(" le perso ----> {}", perso());
-
+                    //info!("\n\nle perso ------------> {}", perso());
+                    hack_to_pdf(perso());
 
 
 

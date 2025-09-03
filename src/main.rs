@@ -20,6 +20,7 @@ mod gen_struct;
 mod nav_bandeau;
 mod page2;
 mod utils;
+mod pdfprinter;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 const DB: Asset = asset!("/assets/cthulhuhack.db");
@@ -71,7 +72,7 @@ fn App() -> Element {
     };
     use_context_provider(|| app );
 
-    use_context_provider(|| Rc::new(Character::default()));
+    //use_context_provider(|| Rc::new(Character::default()));
 
     let mut current_view = use_signal(|| CurrentView::Dashboard);
 
