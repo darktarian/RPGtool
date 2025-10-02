@@ -9,10 +9,10 @@ title = "RPG Tools"
 [web.resource]
 
 # Additional CSS style files
-style = ["../assets/main.css"]
+style = ["../assets/main.css", "../assets/bootstrap/css/bootstrap.min.css"]
 
 # Additional JavaScript files
-script = []
+script = ["../assets/bootstrap/js/bootstrap.min.js"]
 
 [web.resource.dev]
 

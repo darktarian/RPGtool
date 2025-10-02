@@ -109,7 +109,7 @@ pub(crate) fn DiceBoard() -> Element {
         //zone des résultats.
         div { class:"row mt-2",
             div { class:"col",
-                div { class: "bg-dark round rounded-2 p-3", id: "result",
+                div { class: "bg-dark round rounded-2 p-3 text-light", id: "result",
                     "{sig_result}"
                  }
             }

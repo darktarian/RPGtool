@@ -23,6 +23,8 @@ mod pdfprinter;
 mod utils;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
+const BOOT: Asset = asset!("/assets/bootstrap/css/bootstrap.min.css");
+const JS: Asset = asset!("/assets/bootstrap/js/bootstrap.bundle.js");
 const DB: Asset = asset!("/assets/cthulhuhack.db");
 
 /*thread_local! {
@@ -97,6 +99,8 @@ fn App() -> Element {
         }
         //document::Link { rel: "icon", href: FAVICON }
         document::Stylesheet { href: MAIN_CSS }
+        document::Stylesheet { href: BOOT }
+        document::Script { src: JS }
         //Bandeau {  }
         //ChackGenerate{}
         div { class:"container-fluid", id:"cont_fuild",
