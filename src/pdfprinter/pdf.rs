@@ -1,11 +1,21 @@
 use printpdf::*;
-use std::fs::File;
-use std::io::BufWriter;
+use unaccent::unaccent;
+use hyphenation::{Language, Load, Standard};
+use textwrap::{wrap, Options, WordSplitter};
 
+use crate::FONT;
 use crate::gen_struct::cthulhu_struct::Character;
+use crate::gen_struct::rpg_utils::{horodate_filename};
 
 pub fn hack_to_pdf(perso: Character) {
     println!("{}", perso);
+    //let police_file = include_bytes!("../../assets/dejavu-sans.condensed.ttf");
+    //println!("police size byte: {}", police_file.len());
+    let mut doc = PdfDocument::new(&perso.name);
+    //let font_slice = ParsedFont::from_bytes(police_file, 0, &mut Vec::new()).unwrap();
+    //let police_id = doc.add_font(&font_slice);
+
+
 
     //let item_perso = TextItem::Text(converted_perso.to);
 
@@ -80,7 +90,7 @@ pub fn hack_to_pdf(perso: Character) {
     //item_capacite1.push(TextItem::Text(format!("{name1}:")));
     //let item1_desc = vec![TextItem::Text(item1_desc)];
 
-    let mut doc = PdfDocument::new(&perso.name);
+
     let mut page1_contents = vec![
         Op::Marker {
             id: "debugging-marker".to_string(),
@@ -146,20 +156,29 @@ pub fn hack_to_pdf(perso: Character) {
     for (name, desc) in capacites.iter() {
         println!("{name}");
 
-        page1_contents.push(Op::WriteTextBuiltinFont {
-            items: vec![TextItem::Text(name.to_string())],
+        page1_contents.push(
+            Op::WriteTextBuiltinFont {
+            items: vec![TextItem::Text(unaccent(name.to_string()))],
             font: BuiltinFont::TimesRoman,
         });
         page1_contents.push(Op::AddLineBreak);
         
-        //
-        //TODO : découper le texte en section/vec pour que ça pase dans l'affichage
-        //
+        let dictionary = Standard::from_embedded(Language::French).unwrap();
+        let options = Options::new(100).word_splitter(WordSplitter::Hyphenation(dictionary));
+        let resized = wrap(desc, &options);
+
+        for atout_line in resized {
+             let desc_atout = unaccent( special_fr_char(atout_line.to_string()));
+             println!("{}", desc_atout);
+             
+            page1_contents.push(Op::WriteTextBuiltinFont{
+                items: vec![TextItem::Offset(-500.0), TextItem::Text(desc_atout)],
+                font: BuiltinFont::TimesRoman,
+            });
+            page1_contents.push(Op::AddLineBreak);
+        }
         
-        page1_contents.push(Op::WriteTextBuiltinFont {
-            items: vec![TextItem::Offset(-500.0), TextItem::Text(desc.to_string())],
-            font: BuiltinFont::TimesRoman,
-        });
+
         page1_contents.push(Op::AddLineBreak);
     }
     page1_contents.push(Op::EndTextSection);
@@ -170,5 +189,17 @@ pub fn hack_to_pdf(perso: Character) {
         .with_pages(vec![page1])
         .save(&PdfSaveOptions::default(), &mut Vec::new());
 
-    std::fs::write("./perso.pdf", bytes).unwrap();
+
+    let fichier = horodate_filename(&perso.name);
+    std::fs::write(format!("./{}.pdf", fichier), bytes).unwrap();
+}
+
+fn special_fr_char(s: String)-> String{
+
+    let s2 = s.replace("’", " ");
+    let s3 = s2.replace("œ", "oe");
+    let s4 = s3.replace(" « ", " \"");
+    let s5 = s4.replace(" »", "\"");
+
+    s5
 }

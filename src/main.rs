@@ -26,6 +26,7 @@ const MAIN_CSS: Asset = asset!("/assets/main.css");
 const BOOT: Asset = asset!("/assets/bootstrap/css/bootstrap.min.css");
 const JS: Asset = asset!("/assets/bootstrap/js/bootstrap.bundle.js");
 const DB: Asset = asset!("/assets/cthulhuhack.db");
+const FONT: Asset= asset!("/assets/dejavu-sans.condensed.ttf");
 
 /*thread_local! {
    pub static DB: RefCell<Connection> = RefCell::new(rusqlite::Connection::open("cthulhuhack.db").expect("Failed to open database"));
@@ -60,7 +61,7 @@ fn main() {
                 .with_inner_size(LogicalSize::new(1024.0, 768.0)),
         )
         .with_menu(create_menu())
-        .with_close_behaviour(WindowCloseBehaviour::LastWindowExitsApp);
+        .with_close_behaviour(WindowCloseBehaviour::WindowCloses);
     dioxus::LaunchBuilder::desktop().with_cfg(conf).launch(App);
 }
 

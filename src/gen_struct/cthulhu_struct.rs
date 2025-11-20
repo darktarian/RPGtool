@@ -7,7 +7,7 @@ use std::{
 };
 
 use crate::gen_struct::rpg_utils::{
-    get_atout_generique, get_bonus, get_random_carac, set_ressources,
+    get_a_name, get_atout_generique, get_bonus, get_random_carac, set_ressources
 };
 
 /// Permet de distribuer 10pt pour les ressources
@@ -184,7 +184,9 @@ pub(crate) struct Character {
 
 impl Character {
     pub(crate) fn generate_pj() -> Character {
+        let name = get_a_name();
         let mut character = Character {
+            name : format!("{} {} {}", name.title.replace(".", ""), name.name, name.surname),
             carac: Caracterisques {
                 fo: get_random_carac(),
                 fo_bonus: "".to_string(),
@@ -262,4 +264,13 @@ pub(crate) struct AtoutGenerique {
     pub(crate) index: u32,
     pub(crate) name: String,
     pub(crate) atout_desc: String,
+}
+
+
+
+#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+pub(crate) struct CharacterName{
+    pub(crate) title: String,
+    pub(crate) name: String,
+    pub(crate) surname: String
 }

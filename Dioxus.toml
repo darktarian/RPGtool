@@ -24,4 +24,4 @@ script = []
 icon = ["../assets/monster.png"]
 identifier = "com.netDReams"
 publisher = "netDreams"
-resources = ["../assets/cthulhuhack.db"]
+resources = ["../assets/cthulhuhack.db", "../dejavu-sans.condensed.ttf"]

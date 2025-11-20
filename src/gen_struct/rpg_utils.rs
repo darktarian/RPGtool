@@ -1,14 +1,13 @@
 use std::{collections::HashSet, rc::Rc};
-
 use crate::{
-    gen_struct::cthulhu_struct::{
-        random_distribution, Archetype, AtoutGenerique, Character, HackDice,
-    },
-    AppContext,
+    AppContext, gen_struct::cthulhu_struct::{
+        Archetype, AtoutGenerique, Character, CharacterName, HackDice, random_distribution
+    }
 };
+use chrono::{DateTime, Local};
 use dioxus::{logger::tracing::info, prelude::*};
 use rand::{Rng, SeedableRng};
-use rusqlite::Connection;
+use rusqlite::{Connection, Result};
 
 ///Genrateur des valeurs de caracteristiques (entre 4 et 18)
 pub(crate) fn get_random_carac() -> i32 {
@@ -62,22 +61,22 @@ pub(crate) fn get_archetype_base(arch: Vec<Archetype>, target: &str) -> String {
 
 /// Requet vers la base sqlite pour obtenir les atout
 /// TODO : check des atouts avancés ?
-/// TODO -> passeg d'argument du nombre d'atout à renvoyer de maniere random.
+/// TODO -> passeg d"argument du nombre d"atout à renvoyer de maniere random.
 pub(crate) fn get_atout_generique(nb: Option<u8>) -> Vec<AtoutGenerique> {
     let ctx = use_context::<AppContext>();
     let conn: Rc<Connection> = ctx.connect;
-    let mut rqst_atout = conn.prepare("select * from atout_generique").unwrap();
+    let mut rqst_atout = conn.prepare("select * from atout_generique where is_advanced = 0").unwrap();
 
-    let atouts = rqst_atout
+    let atouts:Vec<AtoutGenerique> = rqst_atout
         .query_map([], |r| {
             Ok(AtoutGenerique {
-                index: r.get(0)?,
-                name: r.get(1)?,
-                atout_desc: r.get(2)?,
+                index: r.get(0).unwrap(),
+                name: r.get(1).unwrap(),
+                atout_desc: r.get(2).unwrap(),
             })
         })
         .unwrap()
-        .collect::<Result<Vec<_>, _>>()
+        .collect::<Result<Vec<AtoutGenerique>, _>>()
         .unwrap();
 
     match nb {
@@ -108,7 +107,7 @@ pub(crate) fn get_atout_generique(nb: Option<u8>) -> Vec<AtoutGenerique> {
     }
 }
 
-///Requete vers la base sqlite pour obtenir les données d'archetypes.
+///Requete vers la base sqlite pour obtenir les données d"archetypes.
 ///
 pub(crate) fn get_archetype() -> Vec<Archetype> {
     let ctx = use_context::<AppContext>();
@@ -126,3 +125,49 @@ pub(crate) fn get_archetype() -> Vec<Archetype> {
     .collect::<Result<Vec<_>, _>>()
     .unwrap()
 }
+
+
+pub(crate) fn get_a_name() -> CharacterName {
+        let ctx = use_context::<AppContext>();
+    let conn: Rc<Connection> = ctx.connect;
+    let mut rqst = conn.prepare("select Title, GivenName, Surname from FakeNameGenerator where NameSet != \"Hobbit\"").unwrap();
+
+   let name_vec =  rqst.query_map([], |r| {
+        Ok(
+            CharacterName{
+                name: r.get(1).unwrap(),
+                surname:r.get(2).unwrap(),
+                title: r.get(0).unwrap(),
+            }
+        )
+    }).unwrap()
+    .collect::<Result<Vec<_>, _>>()
+    .unwrap();
+
+    let val = getrandom::u64().unwrap();
+    let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
+    let i = rng.random_range(0..name_vec.len());
+
+    if let Some(name) = name_vec.get(i){
+        return name.clone();
+    }else{
+        return CharacterName::default();
+    }
+
+
+}
+
+
+
+pub fn horodate_filename(filename: &str) -> String {
+    let now = Local::now();
+    let timestamp = now.format("%Y%m%d_%H%M%S").to_string();
+
+    // Sépare le nom et l"extension s’il y en a une
+    match filename.rsplit_once(".") {
+        Some((base, ext)) => format!("{}_{}.{}", base, timestamp, ext),
+        None => format!("{}_{}", filename, timestamp),
+    }
+}
+
+
