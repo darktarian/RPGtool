@@ -8,19 +8,25 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.69"
-dioxus = { version = "0.6.3", features = ["desktop"] }
+dioxus = { version = "0.7.1", features = ["desktop"] }
 getrandom = {version = "0.3.3", features = ["wasm_js"]}
 rand = {version ="0.9.1"}
 js-sys= {version = "^0.3"}
 serde_json = "1.0.82"
 serde = { version = "^1.0", features = ["derive"] }
-rusqlite = { version = "0.36.0", features = ["bundled"] }
-dioxus-desktop = "0.6.3"
+rusqlite = { version = "0.37.0", features = ["bundled"] }
+dioxus-desktop = "0.7.1"
 dice_forge = "0.3.0"
 ndm = "0.9.10"
+tyche = "0.3.1"
 rpg-dice-roller = "0.2.0"
 #tokio-rusqlite = "0.6.0"
 #tokio={version ="1.45.1", features = ["full"]}
+printpdf = "0.8.0"
+chrono = "0.4.42"
+unaccent = "0.1.1"
+textwrap = { version="0.16.2", features = ["hyphenation","terminal_size"]}
+hyphenation = { version = "0.8.3", features = ["embed_all"] }
 
 [features]
 default = ["desktop"]

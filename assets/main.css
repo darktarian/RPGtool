@@ -8,10 +8,9 @@
 }
 
 body {
-  padding: 15px;
+  padding: 1px;
   background-color: #232626;
   background: radial-gradient(circle at center, #0b0f0f, #000000);
-  /*background-image: url("https://www.transparenttextures.com/patterns/3px-tile.png");*/
   font-family: "Cinzel', serif"; /*"UnifrakturCook", cursive;*/
   background-size: fill;
   color: #f5f5dc; /*#ddd;*/
@@ -21,18 +20,19 @@ body {
   background-color: #1a1a1a;
 }
 
+/*
 .btn-warning {
   background-color: var(--bs-primary);
   border-color: var(--bs-primary);
   color: #0b0f0f;
-}
+}*/
 
 .btn-primary:hover {
   background-color: #d4b16a;
 }
 
 .square-btn {
-  width: 70px;
+  width: 75px;
   aspect-ratio: 1 / 1;
   background-color: #34495e;
   border: none;
@@ -51,6 +51,56 @@ body {
   color: black;
   border-color: black;
 }
+
+
+.btn-dice {
+  display: inline-block;    
+  background-color: #f0c040; /* jaune doux */
+  color: #000;              
+  border: 1px solid #d9a520;
+  width: 50px;
+  height: 35px;     
+  line-height: 35px;      
+  text-align: center;  
+  /*padding: 2px; */          
+  font-size: 0.85rem;       
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none; 
+}
+
+.btn-dice:hover {
+  background-color: #e6b93a;
+  border-color: #c9981e;
+}
+
+.btn-help {
+  display: inline-block;    
+  background-color: #0d910f;
+  color: #282727;              
+  border: 1px solid #134d09;
+  width: 70px;
+  height: 40px;     
+  line-height: 40px;      
+  text-align: center;  
+  padding: 2px;          
+  font-size: 0.85rem;       
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none; 
+}
+
+.btn-help:hover {
+  background-color: #8ae63a;
+  border-color: #164b0e;
+}
+
+
+
+
+
 
 .btn-cth-dark {
   background-color: #0b1f1a;

@@ -1,111 +1,33 @@
-use std::{cell::RefCell, collections::{HashMap, HashSet}, rc::Rc};
+use std::{
+    collections::{HashSet},
+    rc::Rc,
+};
 
+use crate::{
+    gen_struct::{
+        cthulhu_struct::Character,
+        rpg_utils::{get_archetype, get_archetype_base, get_atout_generique, get_bonus},
+    },
+    AppContext,
+};
 use dioxus::{logger::tracing::info, prelude::*};
-use rand::{Rng, SeedableRng};
 
-use rusqlite::{Connection};
-use serde::{Deserialize, Serialize};
-
-use crate::{gen_struct::cthulhu_struct::{Archetype, AtoutGenerique}, AppContext};
-
-
-
-
-///Genrateur des valeurs de caracteristiques (entre 4 et 18)
-pub(crate) fn get_random_carac() -> i32 {
-    let val = getrandom::u64().unwrap();
-    let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
-    rng.random_range(4..18)
-}
-
-pub(crate) fn get_a_dice(max: u32) -> u32 {
-    let val = getrandom::u64().unwrap();
-    let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
-    rng.random_range(1..max)
-}
-
-///
-/// Petite fonction pour attribuer les bonus au caracteristiques.
-pub(crate) fn get_bonus(val: i32) -> String {
-    match val {
-        4..=5 => "-3".to_string(),
-        6..=7 => "-2".to_string(),
-        8..=9 => "-1".to_string(),
-        10..=11 => "+0".to_string(),
-        12..=13 => "+1".to_string(),
-        14..=15 => "+2".to_string(),
-        16..=17 => "+3".to_string(),
-        18..=19 => "+4".to_string(),
-        _ => "N.o.N".to_string(),
-    }
-}
-
-fn get_archetype_base(arch: Vec<Archetype>, target: &str) -> String {
-    info!("target: {}", target);
-    let mut result = String::new();
-    for archetype in arch {
-        if archetype.name == target {
-            result = archetype.capacite_spe_base;
-            continue;
-        }
-    }
-    result
-}
-
-
-
-/// Requet vers la base sqlite pour obtenir les atout
-/// TODO : check des atouts avancés ?
-fn get_atout_generique() -> Vec<AtoutGenerique> {
-    let ctx = use_context::<AppContext>();
-    let conn: Rc<Connection> = ctx.connect; 
-    let mut rqst_atout = conn.prepare("select * from atout_generique").unwrap();
-
-    rqst_atout
-        .query_map([], |r| {
-            Ok(AtoutGenerique {
-                index: r.get(0)?,
-                name: r.get(1)?,
-                atout_desc: r.get(2)?,
-            })
-        })
-        .unwrap()
-        .collect::<Result<Vec<_>, _>>()
-        .unwrap()
-}
-
-///Requete vers la base sqlite pour obtenir les données d'archetypes.
-/// 
-fn get_archetype() -> Vec<Archetype> {
-    let ctx = use_context::<AppContext>();
-    let conn: Rc<Connection> = ctx.connect;
-    let mut rqst = conn.prepare("select * from archetype").unwrap();
-
-    rqst.query_map([], |r| {
-        Ok(Archetype {
-            index: r.get(0)?,
-            name: r.get(1)?,
-            capacite_spe_base: r.get(2)?,
-        })
-    })
-    .unwrap()
-    .collect::<Result<Vec<_>, _>>()
-    .unwrap()
-}
+use crate::pdfprinter::pdf::hack_to_pdf;
 
 ///On assemble les parties de la vue ici.
-pub(crate) fn CthulhuGenAll() -> Element{
-    rsx!{
+#[component]
+pub(crate) fn CthulhuGenAll() -> Element {
+    rsx! {
         ChackGenerate {  },
         Get_atout {  }
     }
 }
+
 ///
 /// Ou l'on genere la partie haute de cthulhu genrator avec les caracteristique.
-/// 
+///
 #[component]
 pub(crate) fn ChackGenerate() -> Element {
-
     let mut sig_fo = use_signal(|| 0);
     let mut sig_dex = use_signal(|| 0);
     let mut sig_co = use_signal(|| 0);
@@ -113,109 +35,143 @@ pub(crate) fn ChackGenerate() -> Element {
     let mut sig_sag = use_signal(|| 0);
     let mut sig_cha = use_signal(|| 0);
 
+    let mut sig_bagout = use_signal(String::new);
+    let mut sig_torche = use_signal(String::new);
+    let mut sig_san = use_signal(String::new);
+    let mut sig_dv = use_signal(String::new);
+    let mut sig_arme = use_signal(String::new);
+    let mut sig_unarmed = use_signal(String::new);
+
     rsx! {
-        div {  class:"row mb-2",
+        div {  class:"row mb-2 align-items-start",
             div {  class:"col",
                 button { type:"button", class:"btn btn-md btn-outline-light m-1", id:"btnGen", onclick:
                     move |_| {info!("on génére click");
-                    sig_fo.set(get_random_carac());
-                    sig_dex.set(get_random_carac());
-                    sig_co.set(get_random_carac());
-                    sig_int.set(get_random_carac());
-                    sig_sag.set(get_random_carac());
-                    sig_cha.set(get_random_carac());
+                    let mut ctx: AppContext = use_context();
+                    let generated_pj = Character::generate_pj();
+                    //info!("TEST -----> {generated_pj}");
+
+                    sig_fo.set(generated_pj.carac.fo);
+                    sig_dex.set(generated_pj.carac.dex);
+                    sig_co.set(generated_pj.carac.con);
+                    sig_int.set(generated_pj.carac.int);
+                    sig_sag.set(generated_pj.carac.sag);
+                    sig_cha.set(generated_pj.carac.cha);
+                    sig_bagout.set(generated_pj.bagou.clone());
+                    sig_torche.set(generated_pj.torche.clone());
+                    sig_san.set(generated_pj.de_sm.clone());
+                    sig_dv.set(generated_pj.de_vie.clone());
+                    sig_arme.set(generated_pj.degat_armed.clone());
+                    sig_unarmed.set(generated_pj.degat_unarmed.clone());
+
+                    ctx.cthulhu_char.set(generated_pj);
+
+
                 },"Generate Value" }
             }
             div {  class:"col"}
         }
         div { class:"row",
-            div { class: "col", id:"colCarac",
+            div { class: "col-4", id:"colCarac",
                 div { class:"col",
                     div { class: "row mb-1",
-                         div { class: "col-4", div { class:"btn btn-warning w-100", id:"btn1", "FOR" }}
-                        div { class: "col-3", div {class:"btn btn-outline-warning w-100", id:"Fo","{sig_fo}" }}
-                        div { class: "col-3",div { class:"btn btn-warning w-100", id:"btn11",  if *sig_fo.read() !=0 { {get_bonus(*sig_fo.read())} }else{ "0" } } }
+                         div { class: "col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn1", "FOR" }}
+                        div { class: "col-2", div {class:"btn btn-outline-warning", style:"width:45px", id:"Fo","{sig_fo}" }}
+                        div { class: "col-2",div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_fo.read() !=0 { {get_bonus(*sig_fo.read())} }else{ "0" } } }
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "CONS" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"Co", "{sig_co}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_co.read() !=0 { {get_bonus(*sig_co.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "CONS" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"Co", "{sig_co}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_co.read() !=0 { {get_bonus(*sig_co.read())} }else{ "0" } }}
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "DEX" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"dex", "{sig_dex}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_dex.read() !=0 { {get_bonus(*sig_dex.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "DEX" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"dex", "{sig_dex}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_dex.read() !=0 { {get_bonus(*sig_dex.read())} }else{ "0" } }}
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "INT" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"int", "{sig_int}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_int.read() !=0 { {get_bonus(*sig_int.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "INT" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"int", "{sig_int}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_int.read() !=0 { {get_bonus(*sig_int.read())} }else{ "0" } }}
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "SAG" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"sag", "{sig_sag}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_sag.read() !=0 { {get_bonus(*sig_sag.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "SAG" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"sag", "{sig_sag}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_sag.read() !=0 { {get_bonus(*sig_sag.read())} }else{ "0" } }}
                     }
                 }
                 div { class:"col",
                     div {class:"row mb-1",
-                        div {class:"col-4", div { class:"btn btn-warning w-100", id:"btn2", "CHA" } }
-                        div { class:"col-3", div { class:"btn btn-outline-warning w-100", id:"cha", "{sig_cha}" } }
-                        div {class:"col-3",  div { class:"btn btn-warning w-100", id:"btn11",  if *sig_cha.read() !=0 { {get_bonus(*sig_cha.read())} }else{ "0" } }}
+                        div {class:"col-3", div { class:"btn btn-warning", style:"width:60px", id:"btn2", "CHA" } }
+                        div { class:"col-2", div { class:"btn btn-outline-warning", style:"width:45px", id:"cha", "{sig_cha}" } }
+                        div {class:"col-2",  div { class:"btn btn-outline-warning", style:"width:45px", id:"btn11",  if *sig_cha.read() !=0 { {get_bonus(*sig_cha.read())} }else{ "0" } }}
                     }
                 }
-
             }
-            div { class: "col", id: "colAutre",
-                div { class:"row",
+            div { class: "col-3", id: "colAutre",
                     div { class: "col", id:"col2",
-                        div {  class:"btn btn-warning w-25", id:"btn4", "Bagout" }
-                        div {  class:"btn btn-outline-warning m-1", id:"btn5", "E" }
-                        div {  class:"btn btn-outline-warning m-1", id:"btn6", "F" }
+                        div {  class:"btn btn-warning",style:"width:80px", id:"btn4", "Bagout" }
+                        div {  class:"btn btn-outline-warning m-1", id:"btn5", if sig_bagout().is_empty() {" "}else{ {sig_bagout} }}
                     }
                     div{
                         div { class: "col", id:"col3",
-                            div { class:"btn btn-warning w-25", id:"btn7", "Torche" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn9", "I" }
+                            div { class:"btn btn-warning",style:"width:80px", id:"btn5", "Torche" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_torche}  }
                         }
                     }
                     div{
                         div { class: "col", id:"col4",
-                            div { class:"btn btn-warning w-25", id:"btn7", "SAN" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn9", "I" }
+                            div { class:"btn btn-warning",style:"width:80px", id:"btn6", "SAN" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_san} }
                         }
                     }
                     div{
                         div { class: "col", id:"col5",
-                            div { class:"btn btn-warning w-25", id:"btn7", "Richesse" }
+                            div { class:"btn btn-warning", style:"width:80px", id:"btn7", "Richesse" }
                             div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
-                            div { class:"btn btn-outline-warning m-1", id:"btn9", "I" }
                         }
                     }
-                }
-
-                div {  class:"row",
-
-                }
-
             }
+            div { class:"col-3", id:"dvie",
+                    div{ class:"row",
+                        div { class: "col", id:"col5",
+                            div { class:"btn btn-warning", style:"width:70px", id:"btn8", "DV" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_dv} }
+                        }
+                    }
+                    div{ class:"row",
+                        div { class: "col", id:"col5",
+                            div { class:"btn btn-warning",style:"width:70px", id:"btn9", "PdV" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", "H" }
+                        }
+                    }
+                    div{ class:"row",
+                        div { class: "col", id:"col5",
+                            div { class:"btn btn-warning", style:"width:70px", id:"btn10", "Armé" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_arme} }
+                        }
+                    }
+                    div{ class:"row",
+                        div { class: "col", id:"col5",
+                            div { class:"btn btn-warning",style:"width:70px", id:"btn11", "Non Armé" }
+                            div { class:"btn btn-outline-warning m-1", id:"btn8", {sig_unarmed} }
+                        }
+                    }
+          }
         }
     }
 }
 
 #[component]
 pub(crate) fn Get_atout() -> Element {
-
     let archetypes = get_archetype();
     let mut name_vec = Vec::new();
     for arch in &archetypes {
@@ -223,9 +179,7 @@ pub(crate) fn Get_atout() -> Element {
         println!("result base : {arch:?}");
     }
 
-    println!("{name_vec:?}");
-
-    let atouts_gen = get_atout_generique();
+    let atouts_gen = get_atout_generique(None);
     let mut atout_names = Vec::new();
 
     for atout in atouts_gen {
@@ -234,21 +188,17 @@ pub(crate) fn Get_atout() -> Element {
 
     let mut sig_name = use_signal(String::new);
     let txt_base = get_archetype_base(archetypes, &sig_name.read());
-
-    let mut sig_atout_name= use_signal(String::new);
-
+    let mut sig_atout_name = use_signal(String::new);
     let mut selected_atout = use_signal(HashSet::<Rc<String>>::new);
-    
-    //info!("{:?}", selected_atout);
-    //info!("txt base : {txt_base}");
 
-     rsx!{
+    rsx! {
         div { class: "row mt-3",
             div { class:"col",
                 div {  class:"row",
                     div {  class:"col-5",
                         ///////
-                        label { "Choisissez votre atout : " }
+                        /*
+                        label { "Choisissez vos 2 atouts : " }
                         br {  }
                         select {
                                 class: "btn",
@@ -258,7 +208,8 @@ pub(crate) fn Get_atout() -> Element {
                                     let mut sc = selected_atout();
                                     info!("{sig_atout_name}");
                                     //on limite à 4 le nombre d'atout à choisir
-                                    if sc.len()<4{
+                                    //todo -> utiliser un signal pour décompter.
+                                    if sc.len()<3{
                                         sc.insert(sig_atout_name().into());
                                         selected_atout.set(sc);
                                     }
@@ -275,24 +226,25 @@ pub(crate) fn Get_atout() -> Element {
                                 div {
                                     for select in selected_atout().iter().cloned(){
                                             "{select} "
-                                        button {class: "btn btn-sm btn-close btn-danger",
-                                                type:"button",
-                                                onclick: move |_| {
-                                                    let mut sc = selected_atout();
-                                                    sc.remove(&select);
-                                                    selected_atout.set(sc);
-                                                },
-                                            //"🗑"
+                                        p{ display:"inline",
+                                            button {class: "btn btn-sm btn-close btn-danger",
+                                                    type:"button",
+                                                    onclick: move |_| {
+                                                        let mut sc = selected_atout();
+                                                        sc.remove(&select);
+                                                        selected_atout.set(sc);
+                                                    },
+                                            }
                                         }
-                                        br {  }
                                     }
                                 }
                             }//end des atouts selectionnés
                         }
                         //
+                        */
                     }
                     div{class:"col-1",
-                        div{class:"badge text-bg-danger fs-6", "OU" }
+                        //div{class:"badge text-bg-danger fs-6", "OU" }
                     }
                     div{class:"col-5",
                         //mettre ici le choix des archétypes.
@@ -310,7 +262,6 @@ pub(crate) fn Get_atout() -> Element {
                                             option { value: "{name}", "{name}" }
                                         }
                                 }
-
                             }
                         }
                         div { class:"row",
@@ -322,19 +273,30 @@ pub(crate) fn Get_atout() -> Element {
                                 }
                             }
                         }
-                
                     }
                 }
 
-            }//fin col1 
+            }//fin col1
             // besoin d'ajouter une ligne en plus pour mettre en vis à vis les choix d'archetypes.
         }
         div { class:"row mt-5",
-            div { class:"col", 
-                button { class:"btn btn-warning", "Generer PDF" }
+            div { class:"col",
+                button { class:"btn btn-warning",
+                onclick: move |_ |{
+                    let ctx: AppContext = use_context();
+                    let mut perso: Signal<Character> = ctx.cthulhu_char;
+                    //info!("\n\nle perso ------------> {}", perso());
+                    hack_to_pdf(perso());
+
+
+
+                } ,"Generer PDF" }
             }
         }
     }
-
 }
 
+#[component]
+pub(crate) fn Get_metier() -> Element {
+    rsx! {}
+}

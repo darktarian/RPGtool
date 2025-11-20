@@ -1,3 +1,7 @@
+use crate::chthulhu_gen::CthulhuGenAll;
+use crate::diceboard::DiceBoard;
+use crate::gen_struct::cthulhu_struct::Character;
+use crate::page2::Page2;
 use dioxus::desktop::tao::dpi::LogicalSize;
 use dioxus::desktop::tao::window::Theme;
 use dioxus::desktop::tao::window::WindowBuilder;
@@ -7,21 +11,22 @@ use dioxus_desktop::muda::Menu;
 use dioxus_desktop::muda::MenuItem;
 use dioxus_desktop::muda::PredefinedMenuItem;
 use dioxus_desktop::muda::Submenu;
+use rusqlite::Connection;
 use std::rc::Rc;
-use rusqlite::{Connection};
-use crate::chthulhu_gen::CthulhuGenAll;
-use crate::diceboard::DiceBoard;
-use crate::gen_struct::cthulhu_struct::Character;
-use crate::page2::Page2;
 mod chthulhu_gen;
+mod dice_custom;
 mod diceboard;
+mod gen_struct;
 mod nav_bandeau;
 mod page2;
+mod pdfprinter;
 mod utils;
-mod gen_struct;
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
+const BOOT: Asset = asset!("/assets/bootstrap/css/bootstrap.min.css");
+const JS: Asset = asset!("/assets/bootstrap/js/bootstrap.bundle.js");
 const DB: Asset = asset!("/assets/cthulhuhack.db");
+const FONT: Asset= asset!("/assets/dejavu-sans.condensed.ttf");
 
 /*thread_local! {
    pub static DB: RefCell<Connection> = RefCell::new(rusqlite::Connection::open("cthulhuhack.db").expect("Failed to open database"));
@@ -37,10 +42,8 @@ enum CurrentView {
 #[derive(Clone, Debug)]
 struct AppContext {
     connect: Rc<Connection>,
-    cthulhu_char : Character,
+    cthulhu_char: Signal<Character>,
 }
-
-
 
 fn main() {
     // on détermine un config minimale pour l'app.
@@ -55,32 +58,27 @@ fn main() {
                 .with_resizable(true)
                 .with_title("Generator")
                 .with_closable(true)
-                .with_inner_size(LogicalSize::new(800.0, 600.0)),
+                .with_inner_size(LogicalSize::new(1024.0, 768.0)),
         )
         .with_menu(create_menu())
-        .with_close_behaviour(WindowCloseBehaviour::LastWindowExitsApp);
+        .with_close_behaviour(WindowCloseBehaviour::WindowCloses);
     dioxus::LaunchBuilder::desktop().with_cfg(conf).launch(App);
 }
 
 #[component]
 fn App() -> Element {
-
-    use_context_provider(||
-     AppContext{ connect: Rc::new(
+    let app = AppContext {
+        connect: Rc::new(
             rusqlite::Connection::open(DB.bundled().absolute_source_path())
                 .expect("Failed to open database"),
-        ), cthulhu_char: Character::default()  }
-    );
+        ),
 
+        //sans doute need Rc pour le rendre modifiable ou passer par un signal ce qui me semble mieux.
+        cthulhu_char: Signal::new(Character::default()),
+    };
+    use_context_provider(|| app);
 
-    /*use_context_provider(|| {
-        Rc::new(
-            rusqlite::Connection::open(DB.bundled().absolute_source_path())
-                .expect("Failed to open database"),
-        )
-    });*/
-    
-    use_context_provider(|| Rc::new(Character::default()) );
+    //use_context_provider(|| Rc::new(Character::default()));
 
     let mut current_view = use_signal(|| CurrentView::Dashboard);
 
@@ -102,6 +100,8 @@ fn App() -> Element {
         }
         //document::Link { rel: "icon", href: FAVICON }
         document::Stylesheet { href: MAIN_CSS }
+        document::Stylesheet { href: BOOT }
+        document::Script { src: JS }
         //Bandeau {  }
         //ChackGenerate{}
         div { class:"container-fluid", id:"cont_fuild",
@@ -113,26 +113,23 @@ fn App() -> Element {
                         button {
                             class: if *current_view.read() == CurrentView::Dashboard { "active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
                             onclick: move |_| current_view.set(CurrentView::Dashboard),
-                            //span { class: "nav-icon", "📊" }
-                            "Tableau de bord"
+                            "Dice board."
                         }
                         button {
                             class: if *current_view.read() == CurrentView::CthulhuGen { " active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
                             onclick: move |_| current_view.set(CurrentView::CthulhuGen),
-                            //span { class: "nav-icon", "👥" }
-                            "Cthulhu Generator"
+                            "Cthulhu Hack Generator"
                         }
                         button {
                             class: if *current_view.read() == CurrentView::Page2 { " active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
                             onclick: move |_| current_view.set(CurrentView::Page2),
-                            //span { class: "nav-icon", "📈" }
-                            "Page2"
+                            "W.I.P"
                         }
                     }//fin autour des boutons
                 }//fin menu
 
                 //contenu
-                div { class: "content-body; col-10 p-4",
+                div { class: "content-body; col-10 p-3",
                     {render_current_view(current_view.read().clone())}
                 }
             }//fin row
@@ -144,8 +141,8 @@ fn App() -> Element {
 fn render_current_view(view: CurrentView) -> Element {
     match view {
         CurrentView::Dashboard => rsx! { DiceBoard {} },
-        CurrentView::CthulhuGen => rsx! { CthulhuGenAll {  } },
-        CurrentView::Page2 => rsx! { Page2 {  } },
+        CurrentView::CthulhuGen => rsx! { CthulhuGenAll {} },
+        CurrentView::Page2 => rsx! { Page2 {} },
     }
 }
 
@@ -206,4 +203,3 @@ fn create_menu() -> Menu {
 
     menu
 }
-
