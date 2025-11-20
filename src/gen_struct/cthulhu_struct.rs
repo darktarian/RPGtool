@@ -43,6 +43,7 @@ pub(crate) enum HackDice {
 }
 
 impl HackDice {
+    #[allow(dead_code)]
     pub(crate) fn get_dice_level(self) -> i32 {
         match self {
             HackDice::D1 => 1,

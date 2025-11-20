@@ -191,6 +191,7 @@ pub fn hack_to_pdf(perso: Character) {
     std::fs::write(format!("./{}.pdf", fichier), bytes).unwrap();
 }
 
+/*
 fn special_fr_char(s: String)-> String{
 
     let s2 = s.replace("’", " ");
@@ -213,4 +214,4 @@ fn get_UTF8(input: String)->String{
         input
     }
 
-}
+}*/
