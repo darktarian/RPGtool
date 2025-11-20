@@ -2,8 +2,6 @@ use printpdf::*;
 use unaccent::unaccent;
 use hyphenation::{Language, Load, Standard};
 use textwrap::{wrap, Options, WordSplitter};
-
-use crate::FONT;
 use crate::gen_struct::cthulhu_struct::Character;
 use crate::gen_struct::rpg_utils::{horodate_filename};
 
