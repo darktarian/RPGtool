@@ -188,8 +188,8 @@ pub(crate) fn Get_atout() -> Element {
 
     let mut sig_name = use_signal(String::new);
     let txt_base = get_archetype_base(archetypes, &sig_name.read());
-    let mut sig_atout_name = use_signal(String::new);
-    let mut selected_atout = use_signal(HashSet::<Rc<String>>::new);
+    let _sig_atout_name = use_signal(String::new);
+    let _selected_atout = use_signal(HashSet::<Rc<String>>::new);
 
     rsx! {
         div { class: "row mt-3",
@@ -284,7 +284,7 @@ pub(crate) fn Get_atout() -> Element {
                 button { class:"btn btn-warning",
                 onclick: move |_ |{
                     let ctx: AppContext = use_context();
-                    let mut perso: Signal<Character> = ctx.cthulhu_char;
+                    let perso: Signal<Character> = ctx.cthulhu_char;
                     //info!("\n\nle perso ------------> {}", perso());
                     hack_to_pdf(perso());
 

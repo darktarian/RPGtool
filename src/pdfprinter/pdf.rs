@@ -7,11 +7,11 @@ use crate::gen_struct::rpg_utils::{horodate_filename};
 
 pub fn hack_to_pdf(perso: Character) {
     println!("{}", perso);
-    //let police_file = include_bytes!("../../assets/dejavu-sans.condensed.ttf");
+    let police_file = include_bytes!("../../assets/dejavu-sans.condensed.ttf");
     //println!("police size byte: {}", police_file.len());
     let mut doc = PdfDocument::new(&perso.name);
-    //let font_slice = ParsedFont::from_bytes(police_file, 0, &mut Vec::new()).unwrap();
-    //let police_id = doc.add_font(&font_slice);
+    let font_slice = ParsedFont::from_bytes(police_file, 0, &mut Vec::new()).unwrap();
+    let police_id = doc.add_font(&font_slice);
 
 
 
@@ -108,7 +108,7 @@ pub fn hack_to_pdf(perso: Character) {
         },
         Op::AddLineBreak,
         Op::WriteTextBuiltinFont {
-            items: vec![TextItem::Text(format!("Caracteristiques:"))],
+            items: vec![TextItem::Text("Caracteristiques:".to_string())],
             font: BuiltinFont::TimesRoman,
         },
         Op::AddLineBreak,
@@ -139,7 +139,7 @@ pub fn hack_to_pdf(perso: Character) {
         Op::AddLineBreak,
         Op::AddLineBreak,
         Op::WriteTextBuiltinFont {
-            items: vec![TextItem::Text(format!("Atouts:"))],
+            items: vec![TextItem::Text("Atouts:".to_string())],
             font: BuiltinFont::TimesRoman,
         },
         Op::AddLineBreak,
@@ -148,6 +148,7 @@ pub fn hack_to_pdf(perso: Character) {
             size: Pt(11.0),
             font: BuiltinFont::TimesRoman,
         },
+        Op::SetFontSize { size: Pt(11.0), font: police_id.clone() },
     ];
 
     //on genere ici les capacite/atout du personnage
@@ -155,9 +156,9 @@ pub fn hack_to_pdf(perso: Character) {
         println!("{name}");
 
         page1_contents.push(
-            Op::WriteTextBuiltinFont {
-            items: vec![TextItem::Text(unaccent(name.to_string()))],
-            font: BuiltinFont::TimesRoman,
+            Op::WriteText {
+            items: vec![TextItem::Text(unaccent(name))],
+            font: police_id.clone(),
         });
         page1_contents.push(Op::AddLineBreak);
         
@@ -166,12 +167,10 @@ pub fn hack_to_pdf(perso: Character) {
         let resized = wrap(desc, &options);
 
         for atout_line in resized {
-             let desc_atout = unaccent( special_fr_char(atout_line.to_string()));
-             println!("{}", desc_atout);
              
-            page1_contents.push(Op::WriteTextBuiltinFont{
-                items: vec![TextItem::Offset(-500.0), TextItem::Text(desc_atout)],
-                font: BuiltinFont::TimesRoman,
+            page1_contents.push(Op::WriteText{
+                items: vec![TextItem::Offset(-500.0), TextItem::Text(atout_line.to_string())],
+                font: police_id.clone(),
             });
             page1_contents.push(Op::AddLineBreak);
         }
@@ -197,7 +196,21 @@ fn special_fr_char(s: String)-> String{
     let s2 = s.replace("’", " ");
     let s3 = s2.replace("œ", "oe");
     let s4 = s3.replace(" « ", " \"");
-    let s5 = s4.replace(" »", "\"");
+     s4.replace(" »", "\"")
 
-    s5
+    
+}
+
+fn get_UTF8(input: String)->String{
+
+    let s_vec = input.clone().into_bytes();
+
+    let s = String::from_utf8(s_vec);
+    if let Ok(s_utf) = s {
+        s_utf
+    }else{
+        println!("erreur utf-8");
+        input
+    }
+
 }

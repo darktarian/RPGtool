@@ -4,7 +4,7 @@ use crate::{
         Archetype, AtoutGenerique, Character, CharacterName, HackDice, random_distribution
     }
 };
-use chrono::{DateTime, Local};
+use chrono::{Local};
 use dioxus::{logger::tracing::info, prelude::*};
 use rand::{Rng, SeedableRng};
 use rusqlite::{Connection, Result};
@@ -149,9 +149,9 @@ pub(crate) fn get_a_name() -> CharacterName {
     let i = rng.random_range(0..name_vec.len());
 
     if let Some(name) = name_vec.get(i){
-        return name.clone();
+        name.clone()
     }else{
-        return CharacterName::default();
+        CharacterName::default()
     }
 
 

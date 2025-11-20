@@ -26,7 +26,7 @@ const MAIN_CSS: Asset = asset!("/assets/main.css");
 const BOOT: Asset = asset!("/assets/bootstrap/css/bootstrap.min.css");
 const JS: Asset = asset!("/assets/bootstrap/js/bootstrap.bundle.js");
 const DB: Asset = asset!("/assets/cthulhuhack.db");
-const FONT: Asset= asset!("/assets/dejavu-sans.condensed.ttf");
+const _FONT: Asset= asset!("/assets/dejavu-sans.condensed.ttf");
 
 /*thread_local! {
    pub static DB: RefCell<Connection> = RefCell::new(rusqlite::Connection::open("cthulhuhack.db").expect("Failed to open database"));
