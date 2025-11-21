@@ -163,15 +163,4 @@ pub(crate) fn DiceBoard() -> Element {
     }
 }
 
-fn vec_u16_to_string(all_dices: &Vec<u16>) -> String {
-    println!("les u16: {:?}", all_dices);
 
-    let st = all_dices
-        .iter()
-        .map(|n| n.to_string())
-        .collect::<Vec<_>>()
-        .join(", ");
-
-    println!("les dés : {st}");
-    st
-}

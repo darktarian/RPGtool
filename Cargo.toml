@@ -20,13 +20,9 @@ dice_forge = "0.3.0"
 ndm = "0.9.10"
 tyche = "0.3.1"
 rpg-dice-roller = "0.2.0"
-#tokio-rusqlite = "0.6.0"
-#tokio={version ="1.45.1", features = ["full"]}
 printpdf = "0.8.0"
 chrono = "0.4.42"
-unaccent = "0.1.1"
 textwrap = { version="0.16.2", features = ["hyphenation","terminal_size"]}
-hyphenation = { version = "0.8.3", features = ["embed_all"] }
 
 [features]
 default = ["desktop"]

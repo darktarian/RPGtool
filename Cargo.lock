@@ -1572,7 +1572,6 @@ dependencies = [
  "dioxus",
  "dioxus-desktop",
  "getrandom 0.3.4",
- "hyphenation",
  "js-sys",
  "ndm",
  "printpdf",
@@ -1583,7 +1582,6 @@ dependencies = [
  "serde_json",
  "textwrap",
  "tyche",
- "unaccent",
 ]
 
 [[package]]
@@ -6113,15 +6111,6 @@ dependencies = [
  "memoffset",
  "tempfile",
  "winapi",
-]
-
-[[package]]
-name = "unaccent"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e732eb499ccf541e76badc7eb2a929cf8749cfd79022dde9e2cb4628d885a69a"
-dependencies = [
- "unicode-normalization",
 ]
 
 [[package]]

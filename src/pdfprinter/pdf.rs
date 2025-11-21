@@ -1,21 +1,20 @@
+use std::fs;
+
+use dioxus::hooks::use_context;
 use printpdf::*;
-use unaccent::unaccent;
-use hyphenation::{Language, Load, Standard};
-use textwrap::{wrap, Options, WordSplitter};
+use textwrap::{wrap, Options};
+use crate::AppContext;
 use crate::gen_struct::cthulhu_struct::Character;
 use crate::gen_struct::rpg_utils::{horodate_filename};
 
 pub fn hack_to_pdf(perso: Character) {
     println!("{}", perso);
-    let police_file = include_bytes!("../../assets/dejavu-sans.condensed.ttf");
-    //println!("police size byte: {}", police_file.len());
+
+    let police_b = read_asset_bytes().unwrap();
+
     let mut doc = PdfDocument::new(&perso.name);
-    let font_slice = ParsedFont::from_bytes(police_file, 0, &mut Vec::new()).unwrap();
+    let font_slice = ParsedFont::from_bytes(&police_b, 0, &mut Vec::new()).unwrap();
     let police_id = doc.add_font(&font_slice);
-
-
-
-    //let item_perso = TextItem::Text(converted_perso.to);
 
     let mut head_name = Vec::new();
     if perso.name.is_empty() {
@@ -25,7 +24,6 @@ pub fn hack_to_pdf(perso: Character) {
     } else {
         head_name.push(TextItem::Text(perso.name.clone()));
     }
-    //head_name.push(TextItem::Text(format!("Caracteristique:")));
 
     let mut item_carac1 = Vec::new();
     item_carac1.push(TextItem::Text(format!(
@@ -81,13 +79,6 @@ pub fn hack_to_pdf(perso: Character) {
         perso.degat_unarmed
     )));
     let capacites = perso.capacite;
-    //let mut item_capacite1 = Vec::new();
-    //let names: Vec<String> = capacites.clone().into_keys().collect();
-    //let name1 = names.get(0).unwrap();
-    //let item1_desc = capacites.get(name1).unwrap().to_string();
-    //item_capacite1.push(TextItem::Text(format!("{name1}:")));
-    //let item1_desc = vec![TextItem::Text(item1_desc)];
-
 
     let mut page1_contents = vec![
         Op::Marker {
@@ -97,21 +88,24 @@ pub fn hack_to_pdf(perso: Character) {
         Op::SetTextCursor {
             pos: Point::new(Mm(20.0), Mm(270.0)),
         },
+        Op::SetLineHeight { lh: Pt(12.0) },
+        Op::SetFontSize { size: Pt(11.0), font: police_id.clone() },
+        Op::WriteText {
+            items: head_name,
+            font: police_id.clone(),
+        },
+        Op::AddLineBreak,
+        Op::AddLineBreak,
+        Op::WriteText {
+            items: vec![TextItem::Text("Caractéristiques:".to_string())],
+            font: police_id.clone(),
+        },
+        Op::AddLineBreak,
         Op::SetLineHeight { lh: Pt(15.0) },
         Op::SetFontSizeBuiltinFont {
             size: Pt(13.0),
             font: BuiltinFont::TimesRoman,
         },
-        Op::WriteTextBuiltinFont {
-            items: head_name,
-            font: BuiltinFont::TimesRoman,
-        },
-        Op::AddLineBreak,
-        Op::WriteTextBuiltinFont {
-            items: vec![TextItem::Text("Caracteristiques:".to_string())],
-            font: BuiltinFont::TimesRoman,
-        },
-        Op::AddLineBreak,
         Op::WriteTextBuiltinFont {
             items: item_carac1,
             font: BuiltinFont::TimesRoman,
@@ -157,13 +151,15 @@ pub fn hack_to_pdf(perso: Character) {
 
         page1_contents.push(
             Op::WriteText {
-            items: vec![TextItem::Text(unaccent(name))],
+            items: vec![TextItem::Text(name.to_string())],
             font: police_id.clone(),
         });
         page1_contents.push(Op::AddLineBreak);
         
-        let dictionary = Standard::from_embedded(Language::French).unwrap();
-        let options = Options::new(100).word_splitter(WordSplitter::Hyphenation(dictionary));
+        //tout pour la decoupe des textes d'atout pour ne pas sortir de la page.
+        //let dictionary = Standard::from_embedded(Language::French).unwrap();
+        //let options = Options::new(95).word_splitter(WordSplitter::Hyphenation(dictionary));
+        let options = Options::new(90).initial_indent("- ").subsequent_indent(" ").break_words(false);
         let resized = wrap(desc, &options);
 
         for atout_line in resized {
@@ -191,27 +187,10 @@ pub fn hack_to_pdf(perso: Character) {
     std::fs::write(format!("./{}.pdf", fichier), bytes).unwrap();
 }
 
-/*
-fn special_fr_char(s: String)-> String{
-
-    let s2 = s.replace("’", " ");
-    let s3 = s2.replace("œ", "oe");
-    let s4 = s3.replace(" « ", " \"");
-     s4.replace(" »", "\"")
-
-    
+fn read_asset_bytes() -> std::io::Result<Vec<u8>> {
+    let ctx: AppContext = use_context();
+    let path = ctx.font_path;
+    let bytes = fs::read(path)?;
+    Ok(bytes)
 }
 
-fn get_UTF8(input: String)->String{
-
-    let s_vec = input.clone().into_bytes();
-
-    let s = String::from_utf8(s_vec);
-    if let Ok(s_utf) = s {
-        s_utf
-    }else{
-        println!("erreur utf-8");
-        input
-    }
-
-}*/

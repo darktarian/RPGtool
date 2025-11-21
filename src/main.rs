@@ -26,7 +26,7 @@ const MAIN_CSS: Asset = asset!("/assets/main.css");
 const BOOT: Asset = asset!("/assets/bootstrap/css/bootstrap.min.css");
 const JS: Asset = asset!("/assets/bootstrap/js/bootstrap.bundle.js");
 const DB: Asset = asset!("/assets/cthulhuhack.db");
-const _FONT: Asset= asset!("/assets/dejavu-sans.condensed.ttf");
+const FONT: Asset= asset!("/assets/dejavu-sans.condensed.ttf");
 
 /*thread_local! {
    pub static DB: RefCell<Connection> = RefCell::new(rusqlite::Connection::open("cthulhuhack.db").expect("Failed to open database"));
@@ -43,6 +43,7 @@ enum CurrentView {
 struct AppContext {
     connect: Rc<Connection>,
     cthulhu_char: Signal<Character>,
+    font_path : String,
 }
 
 fn main() {
@@ -68,13 +69,9 @@ fn main() {
 #[component]
 fn App() -> Element {
     let app = AppContext {
-        connect: Rc::new(
-            rusqlite::Connection::open(DB.bundled().absolute_source_path())
-                .expect("Failed to open database"),
-        ),
-
-        //sans doute need Rc pour le rendre modifiable ou passer par un signal ce qui me semble mieux.
-        cthulhu_char: Signal::new(Character::default()),
+        connect:Rc::new(rusqlite::Connection::open(DB.bundled().absolute_source_path()).expect("Failed to open database"),),
+        cthulhu_char:Signal::new(Character::default()), 
+        font_path: FONT.bundled().absolute_source_path().to_string(),
     };
     use_context_provider(|| app);
 
