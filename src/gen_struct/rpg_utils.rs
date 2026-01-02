@@ -9,11 +9,25 @@ use dioxus::{logger::tracing::info, prelude::*};
 use rand::{Rng, SeedableRng};
 use rusqlite::{Connection, Result};
 
-///Genrateur des valeurs de caracteristiques (entre 4 et 18)
+///Genrateur des valeurs de caracteristiques (entre 7 et 18)
 pub(crate) fn get_random_carac() -> i32 {
     let val = getrandom::u64().unwrap();
     let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
-    rng.random_range(4..18)
+    rng.random_range(7..18)
+}
+
+///Genrateur des valeurs de caracteristiques (entre 1 et 22)
+pub(crate) fn get_random_tarot_card() -> i32 {
+    let val = getrandom::u64().unwrap();
+    let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
+    rng.random_range(1..22)
+}
+
+///Genrateur des valeurs de caracteristiques (entre 1 et 4)
+pub(crate) fn get_random_d4() -> i32 {
+    let val = getrandom::u64().unwrap();
+    let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
+    rng.random_range(1..4)
 }
 
 pub(crate) fn set_ressources(mut perso: Character) -> Character {
@@ -126,7 +140,6 @@ pub(crate) fn get_archetype() -> Vec<Archetype> {
     .unwrap()
 }
 
-
 pub(crate) fn get_a_name() -> CharacterName {
         let ctx = use_context::<AppContext>();
     let conn: Rc<Connection> = ctx.connect;
@@ -156,8 +169,6 @@ pub(crate) fn get_a_name() -> CharacterName {
 
 
 }
-
-
 
 pub fn horodate_filename(filename: &str) -> String {
     let now = Local::now();

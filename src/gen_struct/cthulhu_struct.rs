@@ -5,15 +5,15 @@ use std::{
     fmt::{self, Display, Formatter},
 };
 
-use crate::gen_struct::rpg_utils::{
-    get_a_name, get_atout_generique, get_bonus, get_random_carac, set_ressources
-};
+use crate::gen_struct::{generate_tarot::get_tarot_card_effect, rpg_utils::{
+    get_a_name, get_atout_generique, get_bonus, get_random_carac, get_random_tarot_card, set_ressources
+}};
 
 /// Permet de distribuer 10pt pour les ressources
 /// on part d'une base fixe qui intègre que les deux derniers (degâts armé et non armés comme à la valeurs de 1).
 /// je fixe bagout, dés de vie, san  et torche avec un min de 1 ou 2 et je ne distribue que 4pt au lieu de 10.
 pub(crate) fn random_distribution(objects: usize, points: i32, max: i32) -> Option<Vec<i32>> {
-    let base = vec![2, 2, 1, 1, 1, 1];
+    let base = vec![2, 2, 2, 2, 0, 0];
 
     let val = getrandom::u64().unwrap();
     let mut rng = rand::rngs::SmallRng::seed_from_u64(val);
@@ -65,6 +65,29 @@ impl HackDice {
             _ => HackDice::D1, // valeur par défaut (au choix)
         }
     }
+
+    pub(crate) fn sub_one(self)-> HackDice{
+        match self{
+            HackDice::D1 => HackDice::D1,
+            HackDice::D4 => HackDice::D1,
+            HackDice::D6 => HackDice::D4,
+            HackDice::D8 => HackDice::D6,
+            HackDice::D10 => HackDice::D8,
+            HackDice::D12 => HackDice::D12
+        }
+    }
+
+    pub(crate) fn add_one(self)-> HackDice{
+        match self {
+            HackDice::D1 => HackDice::D4,
+            HackDice::D4 => HackDice::D6,
+            HackDice::D6 => HackDice::D8,
+            HackDice::D8 => HackDice::D10,
+            HackDice::D10 => HackDice::D12,
+            HackDice::D12 => HackDice::D12
+        }
+    }
+
 }
 
 // Implémentation de Display
@@ -92,6 +115,21 @@ impl From<i32> for HackDice {
             8 => HackDice::D8,
             10 => HackDice::D10,
             12 => HackDice::D12,
+            _ => HackDice::D6, // valeur par défaut (au choix)
+        }
+    }
+
+}
+
+impl From<&str> for HackDice{
+    fn from(value: &str) -> Self {
+        match value {
+            "1" => HackDice::D1,
+            "D4" => HackDice::D4,
+            "D6" => HackDice::D6,
+            "D8" => HackDice::D8,
+            "D10" => HackDice::D10,
+            "D12" => HackDice::D12,
             _ => HackDice::D6, // valeur par défaut (au choix)
         }
     }
@@ -183,6 +221,38 @@ pub(crate) struct Character {
 }
 
 impl Character {
+
+    pub(crate) fn generate_pj_tarot()->Character{
+        let name = get_a_name();
+        let mut character = Character{
+            carac: Caracterisques { 
+                fo: 11, fo_bonus:"".to_string(), 
+                con: 11, co_bonus: "".to_string(), 
+                dex: 11, dex_bonus: "".to_string(), 
+                sag: 11, sage_bonus: "".to_string(), 
+                int: 11, int_bonus: "".to_string(), 
+                cha: 11, cha_bonus: "".to_string() },
+            name: format!("{} {} {}", name.title.replace(".", ""), name.name, name.surname),
+            torche: "D8".to_string(),
+            bagou: "D8".to_string(),
+            de_vie: "D8".to_string(),
+            de_sm: "D8".to_string(),
+            degat_unarmed: "1".to_string(),
+            degat_armed: "D8".to_string(),
+            ..Default::default()
+        };
+
+        for x in [0..3]{
+            let nb = get_random_tarot_card();
+            character = get_tarot_card_effect(nb, character);
+            
+        }
+
+
+        character
+    }
+
+
     pub(crate) fn generate_pj() -> Character {
         let name = get_a_name();
         let mut character = Character {
