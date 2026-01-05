@@ -24,7 +24,7 @@ pub fn hack_to_pdf(perso: Character) {
     } else {
         head_name.push(TextItem::Text(perso.name.clone()));
     }
-
+    
     let mut item_carac1 = Vec::new();
     item_carac1.push(TextItem::Text(format!(
         "FO:{} ({})",
@@ -92,6 +92,12 @@ pub fn hack_to_pdf(perso: Character) {
         Op::SetFontSize { size: Pt(11.0), font: police_id.clone() },
         Op::WriteText {
             items: head_name,
+            font: police_id.clone(),
+        },
+        Op::AddLineBreak,
+        Op::AddLineBreak,
+        Op::WriteText{
+            items: vec![TextItem::Text("Métier : ".to_string()),TextItem::Text(perso.metier.name)],
             font: police_id.clone(),
         },
         Op::AddLineBreak,
