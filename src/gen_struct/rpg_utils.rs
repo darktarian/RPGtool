@@ -45,7 +45,6 @@ pub(crate) fn set_ressources(mut perso: Character) -> Character {
     perso
 }
 
-///
 /// Petite fonction pour attribuer les bonus au caracteristiques.
 pub(crate) fn get_bonus(val: i32) -> String {
     match val {
@@ -122,7 +121,6 @@ pub(crate) fn get_atout_generique(nb: Option<u8>) -> Vec<AtoutGenerique> {
 }
 
 ///Requete vers la base sqlite pour obtenir les données d"archetypes.
-///
 pub(crate) fn get_archetype() -> Vec<Archetype> {
     let ctx = use_context::<AppContext>();
     let conn: Rc<Connection> = ctx.connect;

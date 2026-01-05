@@ -88,6 +88,17 @@ impl HackDice {
         }
     }
 
+    pub(crate) fn max(self)-> u8{
+        match self {
+            HackDice::D1 => 1,
+            HackDice::D4 => 4,
+            HackDice::D6 => 6,
+            HackDice::D8 => 8,
+            HackDice::D10 => 10,
+            HackDice::D12 => 12
+        }
+    }
+
 }
 
 // Implémentation de Display
