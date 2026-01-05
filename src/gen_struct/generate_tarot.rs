@@ -16,7 +16,7 @@ pub(crate) fn get_tarot_card_effect(card: i32, mut character:  Character)-> Char
             character.metier.name = "Archéologue / Archiviste / Bibliothécaire / Medium".to_string();
         },
         2 =>{
-            character.carac.sag+=2;
+            character.carac.sag-=2;
             let dice = HackDice::from(character.bagou.as_str()).add_one();
             character.bagou = dice.to_string();
             character.metier.name = "Acteur / Athlète / Négociateur / Pasteur".to_string()
@@ -60,7 +60,7 @@ pub(crate) fn get_tarot_card_effect(card: i32, mut character:  Character)-> Char
         8 => {
             character.carac.dex+=2;
             character.carac.con+=2;
-            character.carac.int-=1;
+            character.carac.int-=2;
             let dice = HackDice::from(character.de_vie.as_str()).sub_one();
             character.de_vie = dice.to_string();
             character.metier.name = "Barman / Criminel / Soldat".to_string();
@@ -108,8 +108,8 @@ pub(crate) fn get_tarot_card_effect(card: i32, mut character:  Character)-> Char
             character.metier.name = "Magicien / Musicien".to_string()
         },
         11 => {
-            character.carac.con+=2;
-            character.carac.cha-=2;
+            character.carac.fo+=1;
+            character.carac.cha+=1;
             let dice = HackDice::from(character.de_sm.as_str()).sub_one();
             character.de_sm = dice.to_string();
             character.metier.name = "Garde forestier / Escroc / Ouvrier".to_string();
@@ -168,7 +168,7 @@ pub(crate) fn get_tarot_card_effect(card: i32, mut character:  Character)-> Char
         19 => {
             character.metier.name = "Artisan / Ouvrier / Technicien de Police".to_string();
             character.carac.dex-=2;
-            character.carac.dex+=1;
+            character.carac.sag+=1;
             character.carac.cha+=1;
         },
         20 => {

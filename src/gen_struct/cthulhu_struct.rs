@@ -242,12 +242,32 @@ impl Character {
             ..Default::default()
         };
 
-        for x in [0..3]{
-            let nb = get_random_tarot_card();
+        let mut previous_card = Vec::new();
+        for _x in 0..4{
+            let mut nb = get_random_tarot_card();
+            while  previous_card.contains(&nb){
+                nb = get_random_tarot_card();
+            }
+            previous_card.push(nb);
+
             character = get_tarot_card_effect(nb, character);
-            
+            println!("carac after : {:?}", character.carac);
         }
 
+        character.carac.fo_bonus = get_bonus(character.carac.fo);
+        character.carac.dex_bonus = get_bonus(character.carac.dex);
+        character.carac.co_bonus = get_bonus(character.carac.con);
+        character.carac.int_bonus = get_bonus(character.carac.int);
+        character.carac.sage_bonus = get_bonus(character.carac.sag);
+        character.carac.cha_bonus = get_bonus(character.carac.cha);
+
+        //on pourrait passer par une ref ici non ...
+        let mut character = set_ressources(character);
+        let atouts = get_atout_generique(Some(3));
+
+        for at in atouts {
+            character.capacite.insert(at.name, at.atout_desc);
+        }
 
         character
     }
