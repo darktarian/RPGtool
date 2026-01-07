@@ -190,7 +190,7 @@ pub fn hack_to_pdf(perso: Character) {
 
 
     let fichier = horodate_filename(&perso.name);
-    std::fs::write(format!("./{}.pdf", fichier), bytes).unwrap();
+    std::fs::write(format!("./generated/{}.pdf", fichier), bytes).unwrap();
 }
 
 fn read_asset_bytes() -> std::io::Result<Vec<u8>> {

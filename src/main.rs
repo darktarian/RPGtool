@@ -12,6 +12,8 @@ use dioxus_desktop::muda::MenuItem;
 use dioxus_desktop::muda::PredefinedMenuItem;
 use dioxus_desktop::muda::Submenu;
 use rusqlite::Connection;
+use std::fs;
+use std::path::Path;
 use std::rc::Rc;
 mod chthulhu_gen;
 mod dice_custom;
@@ -37,6 +39,8 @@ enum CurrentView {
     Dashboard,
     CthulhuGen,
     Page2,
+    Page3,
+    Page4,
 }
 
 #[derive(Clone, Debug)]
@@ -68,6 +72,12 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+
+    let out_dir = Path::new("./generated");
+    if !out_dir.exists(){
+        let _ = fs::create_dir(out_dir);
+    }
+
     let app = AppContext {
         connect:Rc::new(rusqlite::Connection::open(DB.bundled().absolute_source_path()).expect("Failed to open database"),),
         cthulhu_char:Signal::new(Character::default()), 
@@ -84,16 +94,16 @@ fn App() -> Element {
             rel: "stylesheet",
             href: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
             integrity: "sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH",
-            crossorigin: "anonymous"
+            crossorigin: "anonymous",
         }
         document::Script {
             src: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js",
             integrity: "sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz",
-            crossorigin: "anonymous"
+            crossorigin: "anonymous",
         }
-        document::Link{
-            href:"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
-            rel:"stylesheet",
+        document::Link {
+            href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
+            rel: "stylesheet",
         }
         //document::Link { rel: "icon", href: FAVICON }
         document::Stylesheet { href: MAIN_CSS }
@@ -101,10 +111,11 @@ fn App() -> Element {
         document::Script { src: JS }
         //Bandeau {  }
         //ChackGenerate{}
-        div { class:"container-fluid", id:"cont_fuild",
+        div { class: "container-fluid", id: "cont_fuild",
             div { class: "row vh-100",
                 //pour le menu vertical
-                div {class: "col-2 sidebar text-white d-flex flex-column align-items-stretch",
+                div {
+                    class: "col-2 sidebar text-white d-flex flex-column align-items-stretch",
                     //autour des bouton
                     div { class: "flex-grow-2 d-flex flex-column justify-content-around",
                         button {
@@ -122,24 +133,42 @@ fn App() -> Element {
                             onclick: move |_| current_view.set(CurrentView::Page2),
                             "W.I.P"
                         }
-                    }//fin autour des boutons
-                }//fin menu
+                        button {
+                            class: if *current_view.read() == CurrentView::Page3 { " active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
+                            onclick: move |_| current_view.set(CurrentView::Page3),
+                            "W.I.P"
+                        }
+                        button {
+                            class: if *current_view.read() == CurrentView::Page4 { " active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
+                            onclick: move |_| current_view.set(CurrentView::Page4),
+                            "W.I.P"
+                        }
+                    } //fin autour des boutons
+                } //fin menu
 
                 //contenu
                 div { class: "content-body; col-10 p-3",
                     {render_current_view(current_view.read().clone())}
                 }
-            }//fin row
-        }//cont_fuild
+            } //fin row
+        } //cont_fuild
 
     } //fin rsx
 }
 
 fn render_current_view(view: CurrentView) -> Element {
     match view {
-        CurrentView::Dashboard => rsx! { DiceBoard {} },
-        CurrentView::CthulhuGen => rsx! { CthulhuGenAll {} },
-        CurrentView::Page2 => rsx! { Page2 {} },
+        CurrentView::Dashboard => rsx! {
+            DiceBoard {}
+        },
+        CurrentView::CthulhuGen => rsx! {
+            CthulhuGenAll {}
+        },
+        CurrentView::Page2 => rsx! {
+            Page2 {}
+        },
+        CurrentView::Page3 => todo!(),
+        CurrentView::Page4 => todo!(),
     }
 }
 
@@ -199,4 +228,25 @@ fn create_menu() -> Menu {
     }
 
     menu
+}
+
+
+#[component]
+pub(crate) fn Page3() -> Element {
+    info!("page 2 ");
+    rsx! {
+        div {
+            div { class: "btn btn-cth-eldritch w-25", id: "btn7", "Page 2" }
+        }
+    }
+}
+
+#[component]
+pub(crate) fn Page4() -> Element {
+    info!("page 2 ");
+    rsx! {
+        div {
+            div { class: "btn btn-cth-eldritch w-25", id: "btn7", "Page 2" }
+        }
+    }
 }
