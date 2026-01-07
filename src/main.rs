@@ -1,5 +1,5 @@
-use crate::chthulhu_gen::CthulhuGenAll;
-use crate::diceboard::DiceBoard;
+use crate::gen_struct::chthulhu_gen::CthulhuGenAll;
+use crate::dice::diceboard::DiceBoard;
 use crate::gen_struct::cthulhu_struct::Character;
 use crate::page2::Page2;
 use dioxus::desktop::tao::dpi::LogicalSize;
@@ -15,14 +15,14 @@ use rusqlite::Connection;
 use std::fs;
 use std::path::Path;
 use std::rc::Rc;
-mod chthulhu_gen;
-mod dice_custom;
-mod diceboard;
+
 mod gen_struct;
 mod nav_bandeau;
 mod page2;
 mod pdfprinter;
 mod utils;
+mod dice;
+
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 const BOOT: Asset = asset!("/assets/bootstrap/css/bootstrap.min.css");
