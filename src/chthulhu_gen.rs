@@ -43,40 +43,6 @@ pub(crate) fn ChackGenerate() -> Element {
     let mut sig_unarmed = use_signal(String::new);
 
     rsx! {
-        div { class: "row mb-2 align-items-start",
-            div { class: "col-3",
-                button {
-                    r#type: "button",
-                    class: "btn btn-md btn-outline-light m-1",
-                    id: "btnGen",
-                    onclick: move |_| {
-                        info!("on génére click");
-                        let mut ctx: AppContext = use_context();
-                        let generated_pj = Character::generate_pj_tarot();
-                        sig_fo.set(generated_pj.carac.fo);
-                        sig_dex.set(generated_pj.carac.dex);
-                        sig_co.set(generated_pj.carac.con);
-                        sig_int.set(generated_pj.carac.int);
-                        sig_sag.set(generated_pj.carac.sag);
-                        sig_cha.set(generated_pj.carac.cha);
-                        sig_bagout.set(generated_pj.bagou.clone());
-                        sig_torche.set(generated_pj.torche.clone());
-                        sig_san.set(generated_pj.de_sm.clone());
-                        sig_dv.set(generated_pj.de_vie.clone());
-                        sig_arme.set(generated_pj.degat_armed.clone());
-                        sig_unarmed.set(generated_pj.degat_unarmed.clone());
-                        ctx.cthulhu_char.set(generated_pj);
-
-                    },
-                    "Generate Value"
-                }
-            
-            }
-            div { class: "col-3",
-                div { "Avec la méthode du tarot." }
-            
-            }
-        }
         div { class: "row",
             div { class: "col-4", id: "colCarac",
                 div { class: "col",
@@ -369,6 +335,42 @@ pub(crate) fn ChackGenerate() -> Element {
                 }
             }
         }
+        div { class: "row align-items-start",
+            div { class: "col-4 mt-3",
+                button {
+                    r#type: "button",
+                    class: "btn btn-md btn-outline-light",
+                    id: "btnGen",
+                    onclick: move |_| {
+                        info!("on génére click");
+                        let mut ctx: AppContext = use_context();
+                        let generated_pj = Character::generate_pj_tarot();
+                        sig_fo.set(generated_pj.carac.fo);
+                        sig_dex.set(generated_pj.carac.dex);
+                        sig_co.set(generated_pj.carac.con);
+                        sig_int.set(generated_pj.carac.int);
+                        sig_sag.set(generated_pj.carac.sag);
+                        sig_cha.set(generated_pj.carac.cha);
+                        sig_bagout.set(generated_pj.bagou.clone());
+                        sig_torche.set(generated_pj.torche.clone());
+                        sig_san.set(generated_pj.de_sm.clone());
+                        sig_dv.set(generated_pj.de_vie.clone());
+                        sig_arme.set(generated_pj.degat_armed.clone());
+                        sig_unarmed.set(generated_pj.degat_unarmed.clone());
+                        ctx.cthulhu_char.set(generated_pj);
+
+                    },
+                    "Générer le personnage"
+                }
+            
+            }
+            div { class: "col-3" }
+        }
+        div { class: "col",
+            div { color: "LightGoldenrodYellow",
+                i { "Avec la méthode du tarot." }
+            }
+        }
     }
 }
 
@@ -384,11 +386,9 @@ pub(crate) fn GeneratePDF()-> Element{
                     onclick: move |_| {
                         let ctx: AppContext = use_context();
                         let perso: Signal<Character> = ctx.cthulhu_char;
-                        //info!("\n\nle perso ------------> {}", perso());
                         hack_to_pdf(perso());
-
                     },
-                    "Generer PDF"
+                    "Générer le PDF"
                 }
             }
         }
