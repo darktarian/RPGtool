@@ -2,6 +2,8 @@ use crate::gen_struct::chthulhu_gen::CthulhuGenAll;
 use crate::dice::diceboard::DiceBoard;
 use crate::gen_struct::cthulhu_struct::Character;
 use crate::page2::Page2;
+use crate::page3::Page3;
+use crate::page4::Page4;
 use dioxus::desktop::tao::dpi::LogicalSize;
 use dioxus::desktop::tao::window::Theme;
 use dioxus::desktop::tao::window::WindowBuilder;
@@ -19,6 +21,8 @@ use std::rc::Rc;
 mod gen_struct;
 mod nav_bandeau;
 mod page2;
+mod page3;
+mod page4;
 mod pdfprinter;
 mod utils;
 mod dice;
@@ -131,17 +135,17 @@ fn App() -> Element {
                         button {
                             class: if *current_view.read() == CurrentView::Page2 { " active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
                             onclick: move |_| current_view.set(CurrentView::Page2),
-                            "W.I.P"
+                            "W.I.P - BIA"
                         }
                         button {
                             class: if *current_view.read() == CurrentView::Page3 { " active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
                             onclick: move |_| current_view.set(CurrentView::Page3),
-                            "W.I.P"
+                            "W.I.P - Pendragon v6"
                         }
                         button {
                             class: if *current_view.read() == CurrentView::Page4 { " active btn btn-secondary w-100 my-1 py-1" } else { "inactive btn btn-outline-secondary w-100 my-1 py-1" },
                             onclick: move |_| current_view.set(CurrentView::Page4),
-                            "W.I.P"
+                            "W.I.P - Chants de Tindalos"
                         }
                     } //fin autour des boutons
                 } //fin menu
@@ -167,8 +171,12 @@ fn render_current_view(view: CurrentView) -> Element {
         CurrentView::Page2 => rsx! {
             Page2 {}
         },
-        CurrentView::Page3 => todo!(),
-        CurrentView::Page4 => todo!(),
+        CurrentView::Page3 => rsx!{
+            Page3 {}
+        },
+        CurrentView::Page4 => rsx!{
+            Page4 {}
+        },
     }
 }
 
@@ -231,22 +239,5 @@ fn create_menu() -> Menu {
 }
 
 
-#[component]
-pub(crate) fn Page3() -> Element {
-    info!("page 2 ");
-    rsx! {
-        div {
-            div { class: "btn btn-cth-eldritch w-25", id: "btn7", "Page 2" }
-        }
-    }
-}
 
-#[component]
-pub(crate) fn Page4() -> Element {
-    info!("page 2 ");
-    rsx! {
-        div {
-            div { class: "btn btn-cth-eldritch w-25", id: "btn7", "Page 2" }
-        }
-    }
-}
+
